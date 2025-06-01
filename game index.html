@@ -1,0 +1,3338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title id="appTitle"></title> <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+    /* General Styles */
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%); /* Bright lab-like background default */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for scrolling */
+            min-height: 100vh;
+            transition: background 0.5s ease; /* Smooth transition for background color change */
+            padding-top: 20px; /* Add some top padding for scroll */
+            padding-bottom: 20px; /* Add some bottom padding for scroll */
+            box-sizing: border-box; /* Include padding in height calculation */
+            position: relative; /* Penting: agar z-index anak-anak berfungsi dengan baik */
+        }
+
+        /* Body background colors for specific sections */
+        body.bg-welcome { background: linear-gradient(135deg, #ccffee 0%, #a7ffeb 100%); } /* Very light green-blue for welcome */
+        body.bg-login { background: linear-gradient(135deg, #e6ee9c 0%, #cddc39 100%); } /* Light lime green for login */
+        body.bg-profile { background: linear-gradient(135deg, #ffe0e0 0%, #ffbbbb 100%); } /* Light pink for profile */
+        body.bg-menu { background: linear-gradient(135deg, #e0f7fa 0%, #bbdefb 100%); } /* Default Blueish */
+        body.bg-level1 { background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%); } /* Pink */
+        body.bg-level2 { background: linear-gradient(135deg, #fffde7 0%, #fff9c4 100%); } /* Yellow */
+        body.bg-level3 { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); } /* Green */
+        body.bg-level4 { background: linear-gradient(135deg, #ffe0b2 0%, #ffcc80 100%); } /* Orange */
+        body.bg-kimiafun { background: linear-gradient(135deg, #e1f5fe 0%, #bbdefb 100%); } /* Light Blue */
+        body.bg-ulangan { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); } /* Purple */
+        body.bg-highscores { background: linear-gradient(135deg, #efebe9 0%, #d7ccc8 100%); } /* Greyish */
+        body.bg-appguide { background: linear-gradient(135deg, #fbe9e7 0%, #ffccbc 100%); } /* Light Reddish */
+        body.bg-elementfusion { background: linear-gradient(135deg, #cfe9ff 0%, #9bc4ff 100%); } /* Blue for fusion */
+        body.bg-crossword { background: linear-gradient(135deg, #ffedcb 0%, #ffdc9c 100%); } /* Orange for crossword */
+
+
+        .container {
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white container */
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 10; /* Kontainer di atas latar belakang, di bawah tombol */
+            opacity: 0; /* Start hidden for fade-in effect */
+            transform: translateY(20px);
+            animation: fadeInContainer 0.8s forwards ease-out;
+            min-height: 80vh; /* Ensure container is tall enough for content */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to top within container */
+        }
+
+        @keyframes fadeInContainer {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        header h1 {
+            color: #00796b; /* Dark teal for title */
+            font-size: 2.8em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: pulseTitle 2s infinite alternate;
+        }
+
+        @keyframes pulseTitle {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.02); }
+        }
+
+        h2 {
+            color: #00838f; /* Teal for subtitles */
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        h3 {
+            color: #00838f;
+        }
+
+        button {
+            background: #00acc1; /* Cyan button */
+            border: none;
+            color: white;
+            padding: 12px 28px;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 172, 193, 0.3);
+            position: relative; /* Penting: agar z-index bekerja */
+            z-index: 20; /* Tombol harus selalu di atas */
+        }
+
+        button:hover {
+            background: #00838f; /* Darker cyan on hover */
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 172, 193, 0.4);
+        }
+
+        .hidden {
+            display: none !important; /* Gunakan !important untuk memastikan override */
+        }
+
+        /* Input Fields */
+        input[type="text"],
+        input[type="password"],
+        select {
+            font-size: 1em;
+            padding: 12px 18px;
+            margin: 10px auto;
+            border-radius: 8px;
+            border: 1px solid #b2ebf2; /* Light blue border */
+            background-color: #e0f2f7; /* Lighter blue background */
+            color: #333;
+            width: calc(100% - 36px); /* Adjust for padding */
+            max-width: 350px;
+            display: block;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative; /* Penting: agar z-index bekerja */
+            z-index: 20; /* Input harus di atas */
+        }
+
+        input[type="text"]::placeholder,
+        input[type="password"]::placeholder {
+            color: #78909c;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            border-color: #00acc1;
+            box-shadow: 0 0 0 3px rgba(0, 172, 193, 0.2);
+            outline: none;
+        }
+
+        /* Game Specific Styles */
+        .game-content {
+            padding: 20px;
+            margin-top: 20px;
+            background: #f0f8ff; /* Off-white for game sections */
+            border-radius: 10px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 15; /* Konten game di atas container, di bawah tombol */
+        }
+
+        /* Background Animations */
+        #mainBackground {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1; /* Paling belakang */
+            background: linear-gradient(45deg, #a7ffeb, #80deea, #4dd0e1, #26c6da); /* Vibrant blue-green gradient */
+            animation: bgShift 20s infinite alternate;
+        }
+
+        @keyframes bgShift {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        /* Bubbles for general background */
+        .bubble {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.4); /* White transparent bubbles */
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatAndFade 15s infinite ease-in-out;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            z-index: 2; /* Di atas mainBackground tapi di bawah container */
+        }
+
+        @keyframes floatAndFade {
+            0% { transform: translateY(100vh) translateX(0) scale(0.2); opacity: 0; }
+            25% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) translateX(50px) scale(1.2); opacity: 0; }
+        }
+
+        /* Music Controls */
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            z-index: 100; /* Pastikan di paling atas */
+            color: white;
+            font-size: 0.9em;
+        }
+        .music-controls button {
+            background: #00acc1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin: 0;
+            box-shadow: none;
+            transition: background-color 0.2s ease;
+        }
+        .music-controls button:hover {
+            background: #00838f;
+            transform: none;
+            box-shadow: none;
+        }
+        .music-controls input[type="range"] {
+            width: 80px;
+            height: 5px;
+            background: #555;
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 5px;
+            margin: 0;
+            z-index: 1; /* No need for high z-index here */
+        }
+        .music-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00acc1;
+            cursor: grab;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .music-controls input[type="range"]::-moz-range-thumb {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: #00acc1;
+            cursor: grab;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Menu Tabung Layout */
+        #menuMain .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+            max-width: 600px; /* Limit width for better alignment */
+            margin-left: auto;
+            margin-right: auto;
+            position: relative; /* Grid perlu posisi agar itemnya di atas */
+            z-index: 1; /* Di atas background bubbles */
+        }
+
+        .menu-item-tube {
+            background: #fff;
+            border: 2px solid #b2ebf2;
+            border-radius: 15px; /* Softer edges */
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative; /* **PENTING: Agar bisa diklik dan z-index bekerja** */
+            overflow: hidden; /* Hide overflow of tube effect */
+            min-height: 120px; /* Ensure enough space for tube + text */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; /* Align content to bottom */
+            z-index: 10; /* **PENTING: Agar bisa diklik, pastikan di atas elemen latar belakang lainnya** */
+        }
+
+        .menu-item-tube:hover {
+            border-color: #00bcd4;
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .menu-item-tube::before { /* Tube visual */
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px; /* Width of the tube */
+            height: 60px; /* Height of the tube */
+            border: 3px solid #00acc1;
+            border-radius: 50%; /* Make it round (top of tube) */
+            background: linear-gradient(to bottom, #e0f7fa, #b2ebf2);
+            transition: all 0.3s ease;
+            z-index: 1; /* **PENTING: Pastikan ini di bawah teks h3 (z-index: 2)** */
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .menu-item-tube:hover::before {
+            border-color: #00838f;
+            transform: translateX(-50%) translateY(-2px); /* Slight lift */
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.3);
+        }
+
+        /* Specific tube colors for levels */
+        .menu-item-tube.level1::before { background: linear-gradient(to bottom, #ffe0f0, #f8bbd0); border-color: #e91e63; }
+        .menu-item-tube.level2::before { background: linear-gradient(to bottom, #fff8e1, #fff9c4); border-color: #ffeb3b; }
+        .menu-item-tube.level3::before { background: linear-gradient(to bottom, #f1f8e9, #c8e6c9); border-color: #4caf50; }
+        .menu-item-tube.level4::before { background: linear-gradient(to bottom, #ffeccb, #ffcc80); border-color: #ff9800; }
+        .menu-item-tube.kimia-fun::before { background: linear-gradient(to bottom, #e1f5fe, #bbdefb); border-color: #00acc1; }
+        .menu-item-tube.mode-ulangan::before { background: linear-gradient(to bottom, #f3e5f5, #e1bee7); border-color: #9c27b0; }
+        .menu-item-tube.high-scores::before { background: linear-gradient(to bottom, #ede7f6, #d1c4e9); border-color: #673ab7; }
+        .menu-item-tube.app-guide::before { background: linear-gradient(to bottom, #ffebee, #ffcdd2); border-color: #f44336; }
+
+
+        .menu-item-tube h3 {
+            color: #00838f;
+            margin-top: 70px; /* Space for the tube icon */
+            font-size: 1.1em;
+            line-height: 1.3;
+            font-weight: 600;
+            z-index: 2; /* **PENTING: Bawa teks di atas pseudo-element ::before** */
+            position: relative; /* Diperlukan agar z-index bekerja pada teks */
+        }
+
+        /* Level Specific Styles */
+        .reaction {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #00695c;
+            font-weight: bold;
+        }
+        .slider-container {
+            margin: 20px 0;
+        }
+        .slider-container label {
+            font-weight: 600;
+            color: #00796b;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="range"] {
+            width: 80%;
+            max-width: 400px;
+            height: 8px;
+            background: #e0f2f7;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: 10px;
+            position: relative; /* Penting: agar z-index bekerja */
+            z-index: 20;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00acc1;
+            cursor: grab;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00acc1;
+            cursor: grab;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Level 2 Visuals */
+        .reactor-visual {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end; /* Align to bottom for "liquid" effect */
+            margin-top: 30px;
+            min-height: 150px;
+            position: relative;
+            border-bottom: 2px solid #ccc; /* Reactor base */
+            padding-bottom: 10px;
+        }
+
+        .beaker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            width: 100px;
+            height: 120px;
+            border: 2px solid #999;
+            border-top: none;
+            border-radius: 0 0 15px 15px;
+            background-color: #f0f8ff;
+            overflow: hidden;
+        }
+
+        .liquid {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #b3e5fc; /* Light blue liquid */
+            transition: height 0.5s ease-in-out;
+            border-radius: 0 0 13px 13px;
+        }
+
+        .liquid-reactants { background-color: #ffccbc; } /* Light orange-red */
+        .liquid-products { background-color: #c8e6c9; }  /* Light green */
+
+        .status {
+            margin-top: 25px;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #00796b;
+        }
+
+        /* Quiz Styles (for Level 3, 4, Ulangan) */
+        .quiz-choices button {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 10px auto;
+            text-align: left;
+            background: #e0f7fa;
+            color: #00796b;
+            border: 1px solid #b2ebf2;
+            position: relative; /* Penting: agar z-index bekerja */
+            z-index: 20;
+        }
+        .quiz-choices button:hover:not(:disabled) {
+            background: #b2ebf2;
+            color: #006064;
+        }
+        .quiz-choices button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        .feedback {
+            font-weight: bold;
+            font-size: 1.1em;
+            min-height: 25px; /* Prevent layout shift */
+            margin-top: 10px;
+        }
+        .feedback.correct { color: #4CAF50; }
+        .feedback.wrong { color: #f44336; }
+        .feedback.warning { color: #ff9800; } /* For partial correct */
+
+        .score-display, .question-counter {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #00796b;
+            margin-bottom: 10px;
+        }
+
+        /* Timer for Ulangan */
+        #ulanganTimer {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #d32f2f; /* Red for timer */
+            margin: 15px 0;
+            animation: blinkRed 1s infinite alternate; /* Breathing effect */
+        }
+        #ulanganTimer.warning {
+            color: #ff9800; /* Orange for warning */
+            animation: none; /* Stop blinking for warning */
+        }
+        @keyframes blinkRed {
+            from { opacity: 1; }
+            to { opacity: 0.6; }
+        }
+
+        /* Mini-Game Kimia Fun specific styles (New Games) */
+        .mini-game-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .mini-game-card {
+            background: #fff;
+            border: 2px solid #b2ebf2;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+            min-height: 150px; /* Ensure consistent height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative; /* Untuk memastikan z-index bekerja */
+            z-index: 10; /* Untuk memastikan card bisa diklik */
+        }
+
+        .mini-game-card:hover {
+            border-color: #00bcd4;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.12);
+        }
+
+        .mini-game-card h3 {
+            color: #00838f;
+            margin-top: 0;
+            font-size: 1.4em;
+            margin-bottom: 10px;
+        }
+
+        .mini-game-card p {
+            font-size: 0.95em;
+            color: #555;
+            flex-grow: 1; /* Allow description to take available space */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Actual Mini-Game Content Sections */
+        .actual-mini-game {
+            border: 2px dashed #00bcd4;
+            padding: 25px;
+            margin-top: 20px;
+            border-radius: 10px;
+            background-color: #e0f7fa;
+            min-height: 250px; /* Give more space for game elements */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Align content to top within game */
+            text-align: center;
+            position: relative; /* Penting untuk z-index anaknya */
+            z-index: 10;
+        }
+        .actual-mini-game .game-instructions {
+            font-style: italic;
+            color: #006064;
+            margin: 10px 0 20px 0;
+            font-size: 0.95em;
+        }
+        .actual-mini-game h3 {
+            color: #006064;
+            margin-bottom: 15px;
+            font-size: 1.6em;
+        }
+        .actual-mini-game p {
+            margin-bottom: 10px;
+            font-size: 1.05em;
+            line-height: 1.5;
+            color: #388e3c;
+        }
+        .actual-mini-game button {
+            background-color: #388e3c;
+            position: relative; /* Pastikan tombol punya posisi untuk z-index */
+            z-index: 20;
+        }
+        .actual-mini-game button:hover {
+            background-color: #2e7d32;
+        }
+        .mini-game-score {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #1b5e20;
+            font-size: 1.1em;
+        }
+
+        .level-selection-buttons {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            position: relative; /* Pastikan container tombol level punya posisi */
+            z-index: 20;
+        }
+        .level-selection-buttons button {
+            background-color: #00bcd4;
+            padding: 8px 15px;
+            font-size: 1em;
+            margin: 5px;
+        }
+
+        /* Placeholders for specific mini-game visuals */
+        .game-simulation {
+            position: relative;
+            width: 100%;
+            min-height: 200px;
+            border: 1px dashed #00838f;
+            margin-top: 20px;
+            overflow: hidden;
+            z-index: 5; /* Simulasi di bawah tombol dan input lain */
+        }
+        #gameCatching .falling-compound {
+            width: 40px;
+            height: 40px;
+            background-color: #ff5722; /* Orange-red for compounds */
+            border-radius: 50%;
+            position: absolute;
+            top: -50px; /* Start above view */
+            left: 50%;
+            transform: translateX(-50%);
+            animation: fall 3s linear forwards; /* Simulated falling */
+            z-index: 6; /* Di atas area simulasi */
+        }
+        @keyframes fall {
+            to { top: 100%; }
+        }
+        #gameCatching .basket {
+            width: 100px;
+            height: 30px;
+            background-color: #607d8b; /* Blue-grey for basket */
+            border-radius: 5px;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 7; /* Di atas falling-compound untuk tangkapan */
+        }
+
+        #gamePuzzle .puzzle-item {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #795548; /* Brown for puzzle pieces */
+            background-color: #d7ccc8;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 5px;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: grab;
+            position: relative; /* Penting untuk interaksi drag */
+            z-index: 8;
+        }
+        #gamePuzzle .puzzle-dropzone {
+            width: 200px;
+            height: 100px;
+            border: 2px dashed #4caf50; /* Green dashed border */
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e8f5e9;
+            z-index: 7; /* Dropzone di atas simulasi */
+        }
+
+        /* Element Fusion Game Specifics */
+        #gameElementFusion .fusion-elements {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            min-height: 100px;
+            border: 1px dashed #00838f;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #f7fcff;
+            width: 100%;
+        }
+        #gameElementFusion .element-atom {
+            width: 60px;
+            height: 60px;
+            background-color: #ffeb3b; /* Yellow for atoms */
+            border: 2px solid #fbc02d;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            cursor: grab;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            z-index: 8;
+        }
+        #gameElementFusion .element-atom:hover {
+            transform: scale(1.1);
+        }
+        #gameElementFusion .fusion-categories {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+        }
+        #gameElementFusion .category-dropzone {
+            width: 150px;
+            height: 120px;
+            border: 2px dashed #673ab7; /* Purple for dropzones */
+            border-radius: 10px;
+            background-color: #ede7f6;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: #4527a0;
+            padding: 10px;
+            box-sizing: border-box;
+            transition: background-color 0.2s;
+            z-index: 7;
+        }
+        #gameElementFusion .category-dropzone.drag-over {
+            background-color: #d1c4e9;
+        }
+        #gameElementFusion .category-dropzone.correct-drop {
+            background-color: #d4edda;
+            border-color: #4CAF50;
+        }
+        #gameElementFusion .category-dropzone.wrong-drop {
+            background-color: #f8d7da;
+            border-color: #f44336;
+        }
+        #gameElementFusion .category-dropzone .compound-display {
+            font-size: 0.9em;
+            color: #333;
+            margin-top: 5px;
+        }
+        #fusionTimer {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #d32f2f;
+            margin-bottom: 10px;
+        }
+        #fusionScoreText {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #1b5e20;
+            font-size: 1.1em;
+        }
+
+        /* Crossword Game Specifics */
+        #gameCrossword .crossword-grid {
+            display: grid;
+            border: 1px solid #777;
+            margin: 20px auto;
+            position: relative;
+            background-color: #fcfcfc;
+            z-index: 5;
+        }
+        #gameCrossword .crossword-cell {
+            width: 35px; /* Adjust cell size */
+            height: 35px;
+            border: 1px solid #bbb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            text-transform: uppercase;
+            box-sizing: border-box;
+            background-color: #fff;
+            color: #333;
+            position: relative;
+        }
+        #gameCrossword .crossword-cell.empty {
+            background-color: #333;
+            border: none;
+        }
+        #gameCrossword .crossword-cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 0;
+            margin: 0;
+            background-color: transparent;
+            color: inherit;
+            position: relative; /* Untuk memastikan input berada di atas angka */
+            z-index: 2;
+        }
+        #gameCrossword .crossword-cell input:focus {
+            outline: 2px solid #00acc1;
+            background-color: #e0f7fa;
+        }
+        #gameCrossword .crossword-cell .clue-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 0.6em;
+            font-weight: normal;
+            color: #555;
+            z-index: 1; /* Angka di bawah input */
+        }
+        #gameCrossword .crossword-clues {
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3e0;
+            border-radius: 8px;
+            border: 1px solid #ffcc80;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #gameCrossword .crossword-clues h4 {
+            margin-top: 0;
+            color: #ff9800;
+        }
+        #gameCrossword .crossword-clues ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        #gameCrossword .crossword-clues li {
+            margin-bottom: 5px;
+            font-size: 0.95em;
+            color: #666;
+        }
+        #crosswordFeedback {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        #crosswordScoreText {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #1b5e20;
+            font-size: 1.1em;
+        }
+
+
+        /* High Scores Page */
+        #highScoresList {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+        #highScoresList li {
+            background: #f1f8e9;
+            border: 1px solid #c8e6c9;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+            color: #333;
+        }
+        #highScoresList li span:first-child {
+            font-weight: bold;
+            color: #00796b;
+        }
+        #highScoresList li span:last-child {
+            font-weight: 600;
+            color: #d32f2f; /* Red for score */
+        }
+
+        /* App Guide Page */
+        .guide-section {
+            text-align: left;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #fff8e1;
+            border-left: 5px solid #ffccbc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .guide-section h3 {
+            color: #d32f2f;
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 1.4em;
+        }
+        .guide-section p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .guide-section ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            color: #555;
+        }
+        .guide-section ul li {
+            margin-bottom: 5px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2em;
+            }
+            h2 {
+                font-size: 1.6em;
+            }
+            button {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+            .container {
+                padding: 20px;
+            }
+            .menu-item-tube {
+                min-height: 100px;
+                padding: 10px;
+            }
+            .menu-item-tube h3 {
+                margin-top: 60px;
+                font-size: 1em;
+            }
+            .menu-item-tube::before {
+                width: 50px;
+                height: 50px;
+            }
+            .mini-game-card {
+                min-height: 120px;
+                padding: 15px;
+            }
+            .mini-game-card h3 {
+                font-size: 1.2em;
+            }
+            .music-controls {
+                flex-direction: column;
+                bottom: 10px;
+                right: 10px;
+                padding: 8px;
+                gap: 5px;
+            }
+            #gameCrossword .crossword-cell {
+                width: 30px;
+                height: 30px;
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            h2 {
+                font-size: 1.4em;
+            }
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr; /* Stack columns on small screens */
+            }
+            button {
+                width: 100%;
+                margin-left: 0;
+                margin-right: 0;
+            }
+            input[type="text"],
+            input[type="password"],
+            select {
+                width: 100%;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-welcome">
+    <div id="mainBackground"></div>
+
+    <div class="container">
+        <header>
+            <h1 id="appTitle">CHEM-EQ QUEST</h1>
+        </header>
+
+        <section id="welcomeScreen">
+            <h2 id="welcomeHeading">Welcome to CHEM-EQ QUEST!</h2>
+            <p id="languagePrompt">Choose your language / Pilih bahasa Anda:</p>
+            <button onclick="setLanguage('en')">English Language</button>
+            <button onclick="setLanguage('id')">Bahasa Indonesia</button>
+        </section>
+
+        <section id="loginScreen" class="hidden">
+            <h2 id="loginHeading"></h2>
+            <p id="loginPrompt"></p>
+            <input type="text" id="usernameInput" placeholder="" autocomplete="username">
+            <input type="password" id="passwordInput" placeholder="" autocomplete="current-password">
+            <p id="loginFeedback" class="feedback"></p>
+            <button onclick="performLogin()" id="loginButton"></button>
+            <button onclick="loginAsGuest()" id="guestLoginButton"></button>
+        </section>
+
+        <section id="profileInput" class="hidden">
+            <h2 id="profileHeading"></h2>
+            <p id="profilePrompt"></p>
+            <input type="text" id="playerName" placeholder="" autocomplete="name">
+            <input type="text" id="playerClass" placeholder="" autocomplete="organization">
+            <button onclick="saveProfile()" id="saveProfileButton"></button>
+        </section>
+
+        <section id="menuMain" class="hidden">
+            <h2 id="menuMainHeading"></h2>
+            <p id="welcomeMessage"></p>
+            <div class="menu-grid">
+                <div class="menu-item-tube level1" onclick="showSection('level1')">
+                    <h3 id="level1Title"></h3>
+                </div>
+                <div class="menu-item-tube level2" onclick="showSection('level2')">
+                    <h3 id="level2Title"></h3>
+                </div>
+                <div class="menu-item-tube level3" onclick="showSection('level3')">
+                    <h3 id="level3Title"></h3>
+                </div>
+                <div class="menu-item-tube level4" onclick="showSection('level4')">
+                    <h3 id="level4Title"></h3>
+                </div>
+                <div class="menu-item-tube kimia-fun" onclick="showSection('kimiaFun')">
+                    <h3 id="kimiaFunTitle"></h3>
+                </div>
+                <div class="menu-item-tube mode-ulangan" onclick="showSection('ulanganMode')">
+                    <h3 id="ulanganModeTitle"></h3>
+                </div>
+                <div class="menu-item-tube high-scores" onclick="showSection('highScores')">
+                    <h3 id="highScoresTitle"></h3>
+                </div>
+                <div class="menu-item-tube app-guide" onclick="showSection('appGuide')">
+                    <h3 id="appGuideTitle"></h3>
+                </div>
+            </div>
+        </section>
+
+        <section id="level1" class="hidden">
+            <h2 id="level1_h2"></h2>
+            <p id="level1_desc"></p>
+            <p class="question-counter" id="level1QuestionCounter"></p>
+            <p class="score-display" id="level1ScoreDisplay"></p>
+            <div class="game-content">
+                <p id="reaction1" class="reaction"></p>
+                <input type="text" id="inputA1" placeholder="">
+                <input type="text" id="inputB1" placeholder="">
+                <input type="text" id="inputC1" placeholder="">
+                <input type="text" id="inputD1" placeholder="" class="hidden"> <button onclick="checkBalance1()" id="checkAnswerButton1"></button>
+                <p id="feedback1" class="feedback"></p>
+                <button onclick="nextLevel1Question()" id="nextQuestionButton1" class="hidden"></button>
+            </div>
+            <button onclick="showSection('menuMain')" id="backToMenuButton1"></button>
+            <button onclick="startLevel1()" id="resetLevel1Button" class="hidden"></button>
+            <p id="level1Result" class="score-display hidden"></p>
+        </section>
+
+        <section id="level2" class="hidden">
+            <h2 id="level2_h2"></h2>
+            <p id="level2_desc"></p>
+            <p class="question-counter" id="level2QuestionCounter"></p>
+            <p class="score-display" id="level2ScoreDisplay"></p>
+            <div class="game-content">
+                <p id="reaction2" class="reaction"></p>
+                <div class="slider-container" id="n2SliderContainer">
+                    <label for="n2Slider" id="n2Label"></label>
+                    <input type="range" id="n2Slider" min="0" max="10" value="5" oninput="updateEquilibriumVisual()">
+                    <span id="n2Value">5</span>
+                </div>
+                <div class="slider-container" id="h2SliderContainer">
+                    <label for="h2Slider" id="h2Label"></label>
+                    <input type="range" id="h2Slider" min="0" max="10" value="5" oninput="updateEquilibriumVisual()">
+                    <span id="h2Value">5</span>
+                </div>
+                <div class="slider-container" id="nh3SliderContainer">
+                    <label for="nh3Slider" id="nh3Label"></label>
+                    <input type="range" id="nh3Slider" min="0" max="10" value="5" oninput="updateEquilibriumVisual()">
+                    <span id="nh3Value">5</span>
+                </div>
+                <div class="reactor-visual">
+                    <div class="beaker">
+                        <div class="liquid liquid-reactants" id="reactantLiquid" style="height: 50%;"></div>
+                    </div>
+                    <div class="beaker">
+                        <div class="liquid liquid-products" id="productLiquid" style="height: 50%;"></div>
+                    </div>
+                </div>
+                <p id="equilibriumStatus" class="status"></p>
+                <button onclick="checkEquilibrium()" id="checkEquilibriumButton"></button>
+                <p id="feedback2" class="feedback"></p>
+                <button onclick="nextLevel2Question()" id="nextQuestionButton2" class="hidden"></button>
+            </div>
+            <button onclick="showSection('menuMain')" id="backToMenuButton2"></button>
+            <button onclick="startLevel2()" id="resetLevel2Button" class="hidden"></button>
+            <p id="level2Result" class="score-display hidden"></p>
+        </section>
+
+        <section id="level3" class="hidden">
+            <h2 id="level3_h2"></h2>
+            <p id="level3_desc"></p>
+            <p class="question-counter" id="level3QuestionCounter"></p>
+            <p class="score-display" id="level3ScoreDisplay"></p>
+            <div class="game-content">
+                <p id="reaction3" class="reaction"></p>
+                <p id="question3"></p>
+                <div class="quiz-choices" id="choices3">
+                </div>
+                <p id="feedback3" class="feedback"></p>
+                <button onclick="nextLevel3Question()" id="nextQuestionButton3" class="hidden"></button>
+            </div>
+            <button onclick="showSection('menuMain')" id="backToMenuButton3"></button>
+            <button onclick="startLevel3()" id="resetLevel3Button" class="hidden"></button>
+            <p id="level3Result" class="score-display hidden"></p>
+        </section>
+
+        <section id="level4" class="hidden">
+            <h2 id="level4_h2"></h2>
+            <p id="level4_desc"></p>
+            <p class="question-counter" id="level4QuestionCounter"></p>
+            <p class="score-display" id="level4ScoreDisplay"></p>
+            <div class="game-content">
+                <p id="reaction4" class="reaction"></p>
+                <p id="question4"></p>
+                <div class="quiz-choices" id="choices4">
+                </div>
+                <p id="feedback4" class="feedback"></p>
+                <button onclick="nextLevel4Question()" id="nextQuestionButton4" class="hidden"></button>
+            </div>
+            <button onclick="showSection('menuMain')" id="backToMenuButton4"></button>
+            <button onclick="startLevel4()" id="resetLevel4Button" class="hidden"></button>
+            <p id="level4Result" class="score-display hidden"></p>
+        </section>
+
+        <section id="kimiaFun" class="hidden">
+            <h2 id="kimiaFun_h2"></h2>
+            <p id="kimiaFun_desc"></p>
+            <div class="mini-game-selection">
+                <div class="mini-game-card" onclick="showMiniGame('gameCatching')">
+                    <h3 id="catchingGameTitle"></h3>
+                    <p id="catchingGameDesc"></p>
+                </div>
+                <div class="mini-game-card" onclick="showMiniGame('gamePuzzle')">
+                    <h3 id="puzzleGameTitle"></h3>
+                    <p id="puzzleGameDesc"></p>
+                </div>
+                 <div class="mini-game-card" onclick="showMiniGame('gameElementFusion')">
+                    <h3 id="elementFusionGameTitle"></h3>
+                    <p id="elementFusionGameDesc"></p>
+                </div>
+                 <div class="mini-game-card" onclick="showMiniGame('gameCrossword')">
+                    <h3 id="crosswordGameTitle"></h3>
+                    <p id="crosswordGameDesc"></p>
+                </div>
+            </div>
+            <button onclick="showSection('menuMain')" id="backToMenuButtonKimiaFun"></button>
+
+            <div id="gameCatching" class="actual-mini-game hidden">
+                <h3 id="catchingGame_h3"></h3>
+                <p class="game-instructions" id="catchingGameInstructions"></p>
+                <div class="game-simulation">
+                    <div class="basket" id="catchingBasket"></div>
+                    </div>
+                <p class="mini-game-score" id="catchingScoreText"></p>
+                <button onclick="startGameCatching()" id="startGameCatchingButton"></button>
+                <button onclick="endGameCatching()" class="hidden" id="endCatchingButton"></button>
+                <p id="catchingFeedback"></p>
+            </div>
+
+            <div id="gamePuzzle" class="actual-mini-game hidden">
+                <h3 id="puzzleGame_h3"></h3>
+                <p class="game-instructions" id="puzzleGameInstructions"></p>
+                <p id="targetCompoundText"></p>
+                <div class="game-simulation">
+                    <div id="puzzlePieces">
+                        </div>
+                    <div class="puzzle-dropzone" id="puzzleDropzone"></div>
+                </div>
+                <p class="mini-game-score" id="puzzleScoreText"></p>
+                <button onclick="checkPuzzle()" id="checkPuzzleButton"></button>
+                <button onclick="startPuzzleGame()" id="startNewPuzzleButton"></button>
+                <p id="puzzleFeedback"></p>
+            </div>
+
+            <div id="gameElementFusion" class="actual-mini-game hidden">
+                <h3 id="elementFusionGame_h3"></h3>
+                <p class="game-instructions" id="elementFusionInstructions"></p>
+                <p id="fusionTimer"></p>
+                <div class="fusion-elements" id="fusionElements">
+                    </div>
+                <div class="fusion-categories" id="fusionCategories">
+                    <div class="category-dropzone" id="categoryFire" data-category="Fire"><span class="category-name"></span><div class="compound-display"></div></div>
+                    <div class="category-dropzone" id="categoryWater" data-category="Water"><span class="category-name"></span><div class="compound-display"></div></div>
+                    <div class="category-dropzone" id="categoryEarth" data-category="Earth"><span class="category-name"></span><div class="compound-display"></div></div>
+                    <div class="category-dropzone" id="categoryAir" data-category="Air"><span class="category-name"></span><div class="compound-display"></div></div>
+                </div>
+                <p class="mini-game-score" id="fusionScoreText"></p>
+                <button onclick="startElementFusionGame()" id="startFusionButton"></button>
+                <button onclick="endElementFusionGame()" id="endFusionButton" class="hidden"></button>
+                <p id="fusionFeedback"></p>
+            </div>
+
+            <div id="gameCrossword" class="actual-mini-game hidden">
+                <h3 id="crosswordGame_h3"></h3>
+                <p class="game-instructions" id="crosswordInstructions"></p>
+                <div id="crosswordGrid" class="crossword-grid"></div>
+                <div class="crossword-clues">
+                    <h4 id="cluesAcrossTitle"></h4>
+                    <ul id="cluesAcross"></ul>
+                    <h4 id="cluesDownTitle"></h4>
+                    <ul id="cluesDown"></ul>
+                </div>
+                <p class="mini-game-score" id="crosswordScoreText"></p>
+                <button onclick="checkCrossword()" id="checkCrosswordButton"></button>
+                <button onclick="startCrosswordGame()" id="startCrosswordButton"></button>
+                <p id="crosswordFeedback"></p>
+            </div>
+        </section>
+
+        <section id="ulanganMode" class="hidden">
+            <h2 id="ulanganMode_h2"></h2>
+            <p id="ulanganMode_desc"></p>
+            <div class="game-content">
+                <p id="ulanganTimer"></p>
+                <p id="ulanganQuestion"></p>
+                <div class="quiz-choices" id="ulanganChoices">
+                    </div>
+                <p id="feedbackUlangan" class="feedback"></p>
+                <p class="mini-game-score" id="ulanganScoreText"></p>
+            </div>
+            <button onclick="startUlangan()" id="startUlanganButton"></button>
+            <button onclick="showSection('menuMain')" id="backToMenuButtonUlangan"></button>
+        </section>
+
+        <section id="highScores" class="hidden">
+            <h2 id="highScores_h2"></h2>
+            <p id="highScores_desc"></p>
+            <div class="game-content">
+                <ul id="highScoresList">
+                    </ul>
+            </div>
+            <button onclick="showSection('menuMain')" id="backToMenuButtonHighScores"></button>
+        </section>
+
+        <section id="appGuide" class="hidden">
+            <h2 id="appGuide_h2"></h2>
+            <div class="guide-section">
+                <h3 id="guideWelcomeTitle"></h3>
+                <p id="guideWelcomeDesc"></p>
+            </div>
+            <div class="guide-section">
+                <h3 id="guideHowToPlayTitle"></h3>
+                <ul id="guideHowToPlayList">
+                    <li><strong id="guideL1Title"></strong><span id="guideL1Desc"></span></li>
+                    <li><strong id="guideL2Title"></strong><span id="guideL2Desc"></span></li>
+                    <li><strong id="guideL3Title"></strong><span id="guideL3Desc"></span></li>
+                    <li><strong id="guideL4Title"></strong><span id="guideL4Desc"></span></li>
+                    <li><strong id="guideKimiaFunTitle"></strong><span id="guideKimiaFunDesc"></span></li>
+                    <li><strong id="guideUlanganTitle"></strong><span id="guideUlanganDesc"></span></li>
+                    <li><strong id="guideScoresTitle"></strong><span id="guideScoresDesc"></span></li>
+                </ul>
+            </div>
+            <div class="guide-section">
+                <h3 id="guideTipsTitle"></h3>
+                <p id="guideTipsDesc"></p>
+            </div>
+            <button onclick="showSection('menuMain')" id="backToMenuButtonAppGuide"></button>
+        </section>
+    </div>
+
+    <div class="music-controls">
+        <audio id="backgroundMusic" loop>
+            <source src="chemical_music.mp3" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+        <button id="musicToggleButton" onclick="toggleMusic()"></button>
+        <label for="volumeSlider" id="volumeLabel"></label>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.05" value="0.5" oninput="setMusicVolume()">
+    </div>
+
+    <script>
+        // --- Global Variables ---
+        const sections = ['welcomeScreen', 'loginScreen', 'profileInput', 'menuMain', 'level1', 'level2', 'level3', 'level4', 'kimiaFun', 'ulanganMode', 'highScores', 'appGuide', 'gameCatching', 'gamePuzzle', 'gameElementFusion', 'gameCrossword'];
+        let ulanganQuestions = [];
+        let currentUlanganQuestionIndex = 0;
+        let ulanganScore = 0;
+        let ulanganTimerInterval;
+        let timeLeft = 60;
+        let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
+        let currentPlayerName = localStorage.getItem('playerName') || '';
+        let currentPlayerClass = localStorage.getItem('playerClass') || '';
+        let currentLanguage = localStorage.getItem('language') || 'en'; // Default to English
+        let isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'; // Track login status
+
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        let musicPlaying = false; // To track music state
+
+        // Level-specific variables
+        let currentLevel = 0; // Tracks which level is active (1-4)
+        let currentQuestionIndex = 0; // Tracks question index within a level
+        let currentLevelScore = 0; // Tracks score for the current level
+
+        // Element Fusion Game Variables
+        let fusionTimerInterval;
+        let fusionTimeLeft = 90;
+        let fusionScore = 0;
+        let draggedFusionElement = null;
+
+        // Crossword Game Variables
+        let crosswordGridData = [];
+        let crosswordSolution = {};
+        let crosswordClues = { across: [], down: [] };
+        let crosswordScore = 0;
+        let crosswordSolvedCells = 0;
+
+
+        // --- Translations Object ---
+        const translations = {
+            en: {
+                appTitle: "CHEM-EQ QUEST",
+                welcomeHeading: "Welcome to CHEM-EQ QUEST!",
+                languagePrompt: "Choose your language:",
+                loginHeading: "Login to CHEM-EQ QUEST",
+                loginPrompt: "Please enter your credentials or login as a guest.",
+                usernamePlaceholder: "Username (e.g., user)",
+                passwordPlaceholder: "Password (e.g., pass)",
+                loginButton: "Login",
+                guestLoginButton: "Login as Guest",
+                loginSuccess: "Login successful!",
+                loginFailed: "Invalid username or password.",
+                profileHeading: "Enter Your Profile",
+                profilePrompt: "Please enter your name and class:",
+                playerNamePlaceholder: "Your Name",
+                playerClassPlaceholder: "Your Class",
+                saveProfileButton: "Start Game",
+                menuMainHeading: "Select Game Mode",
+                welcomeMessage: (name, className) => `Welcome, ${name} from ${className}!`,
+                level1Title: "Level 1<br>(Simple Reactions)",
+                level2Title: "Level 2<br>(Equilibrium)",
+                level3Title: "Level 3<br>(Reaction Rate)",
+                level4Title: "Level 4<br>(Thermochemistry)",
+                kimiaFunTitle: "Chemistry Fun<br>(Mini-Games)",
+                ulanganModeTitle: "Quiz Mode<br>(Knowledge Test)",
+                highScoresTitle: "High Scores<br>(Leaderboard)",
+                appGuideTitle: "App Guide<br>(App Instructions)",
+                level1_h2: "Level 1: Simple Reactions",
+                level1_desc: "Balance the following chemical equation. (5 questions)",
+                inputA1Placeholder: "a",
+                inputB1Placeholder: "b",
+                inputC1Placeholder: "c",
+                inputD1Placeholder: "d",
+                checkAnswerButton: "Check Answer",
+                nextQuestionButton: "Next Question",
+                levelCorrect: "Correct!",
+                levelWrong: "Wrong answer. Try again!",
+                levelScore: (score) => `Score: ${score}`,
+                levelQuestionCounter: (current, total) => `Question ${current}/${total}`,
+                levelResult: (score, totalScore) => `Level completed! Your score: ${score}/${totalScore}`,
+                resetLevelButton: "Reset Level",
+                backToMenuButton: "Back to Menu",
+
+                level2_h2: "Level 2: Chemical Equilibrium",
+                level2_desc: "Adjust the amount of reactants and products to reach equilibrium. (5 questions)",
+                n2Label: "Amount of N₂:",
+                h2Label: "Amount of H₂:",
+                nh3Label: "Amount of NH₃:",
+                equilibriumStatusBalanced: "Status: BALANCED!",
+                equilibriumStatusNear: "Status: Nearly Balanced!",
+                equilibriumStatusUnbalanced: "Status: Unbalanced",
+                checkEquilibriumButton: "Check Equilibrium",
+                level2Correct: "Congratulations! You reached the exact stoichiometric equilibrium condition.",
+                level2Near: "Good enough, products formed! But try to adjust the ratio for better equilibrium.",
+                level2Wrong: "Not balanced. Remember the coefficient ratios in the reaction!",
+
+                level3_h2: "Level 3: Reaction Rate",
+                level3_desc: "Answer the following questions about reaction rates. (5 questions)",
+                level4_h2: "Level 4: Thermochemistry",
+                level4_desc: "Identify the type of reaction based on enthalpy change. (5 questions)",
+
+                kimiaFun_h2: "Chemistry Fun: Mini-Games!",
+                kimiaFun_desc: "Choose a mini-game to play:",
+                catchingGameTitle: "Catch the Molecules",
+                catchingGameDesc: "Test your speed in catching falling molecules.",
+                puzzleGameTitle: "Compound Puzzle",
+                puzzleGameDesc: "Arrange atoms to form correct chemical compounds.",
+                elementFusionGameTitle: "Element Fusion",
+                elementFusionGameDesc: "Combine elements to form compounds related to natural elements.",
+                crosswordGameTitle: "Chemistry Crossword",
+                crosswordGameDesc: "Solve a crossword puzzle with chemistry clues.",
+
+                catchingGame_h3: "Catch the Molecules",
+                catchingGameInstructions: "Use left/right arrow keys or click/touch to move the basket. Catch all falling molecules!",
+                catchingScoreText: "Score: ",
+                startGameCatchingButton: "Start Game",
+                endCatchingButton: "End Game",
+                catchingGameEnd: (score) => `Game Over! Your final score: ${score}`,
+
+                puzzleGame_h3: "Compound Puzzle",
+                puzzleGameInstructions: "Drag and drop atoms into the correct box to form the requested compound.",
+                targetCompoundText: "Requested Compound: ",
+                puzzleDropzoneText: "Drop here",
+                puzzleScoreText: "Score: ",
+                checkPuzzleButton: "Check Puzzle",
+                startNewPuzzleButton: "Start New Puzzle",
+                puzzleCorrect: (compound) => `Correct! You successfully formed ${compound}.`,
+                puzzleWrong: "Incorrect. Try again! Make sure all atoms and their counts are correct.",
+
+                elementFusionGame_h3: "Element Fusion",
+                elementFusionInstructions: "Drag elements to the correct category (Fire, Water, Earth, Air). Form the correct compounds!",
+                fusionTimerText: (time) => `Time: ${time} seconds`,
+                fusionScoreText: (score) => `Score: ${score}`,
+                startFusionButton: "Start Fusion",
+                endFusionButton: "End Game",
+                fusionCorrect: (compound) => `Correct! ${compound} formed.`,
+                fusionWrong: "Incorrect compound or category.",
+                fusionGameOver: (score) => `Time's up! Your score: ${score}`,
+                categoryFire: "Fire",
+                categoryWater: "Water",
+                categoryEarth: "Earth",
+                categoryAir: "Air",
+
+                crosswordGame_h3: "Chemistry Crossword",
+                crosswordInstructions: "Fill in the crossword puzzle with chemistry terms. Click a cell to see the clue.",
+                cluesAcrossTitle: "Across",
+                cluesDownTitle: "Down",
+                checkCrosswordButton: "Check Answers",
+                startCrosswordButton: "Start New Puzzle",
+                crosswordScoreText: (score) => `Score: ${score}`,
+                crosswordCorrect: "All correct!",
+                crosswordPartial: "Some correct, keep going!",
+                crosswordWrong: "Incorrect answers. Review your chemistry!",
+
+                ulanganMode_h2: "Quiz Mode: Test Your Knowledge!",
+                ulanganMode_desc: "Answer the following questions quickly and accurately.",
+                ulanganTimer: (time) => `Time: ${time} seconds`,
+                ulanganScoreText: (score) => `Quiz Score: ${score}`,
+                startUlanganButton: "Start Quiz",
+                ulanganTimeOver: "Time's Up!",
+                ulanganEnded: (score) => `Quiz finished! Your final score: ${score}`,
+                ulanganCorrect: "Correct!",
+                ulanganWrong: (answer) => `Wrong. The correct answer is: ${answer}`,
+
+                highScores_h2: "High Scores",
+                highScores_desc: "See who's the best at CHEM-EQ QUEST!",
+                noHighScores: "No high scores yet. Play games to add them!",
+                promptPlayerName: (score, game) => `Congratulations! You scored ${score} in ${game}. Enter your name for the leaderboard:`,
+                appGuide_h2: "App Guide: App Instructions",
+                guideWelcomeTitle: "Welcome to CHEM-EQ QUEST!",
+                guideWelcomeDesc: "This app is designed to help you understand basic chemistry concepts through interactive games. There are four main levels covering various topics, as well as mini-games and a quiz mode to test your knowledge.",
+                guideHowToPlayTitle: "How to Play?",
+                guideL1Title: "Level 1 (Simple Reactions): ",
+                guideL1Desc: "Balance chemical equations by entering the correct stoichiometric coefficients. Each level has 5 questions.",
+                guideL2Title: "Level 2 (Chemical Equilibrium): ",
+                guideL2Desc: "Adjust the amount of reactants and products using sliders to reach equilibrium. Pay attention to the reactor visuals! Each level has 5 questions.",
+                guideL3Title: "Level 3 (Reaction Rate): ",
+                guideL3Desc: "Answer multiple-choice questions about factors affecting reaction rate. Each level has 5 questions.",
+                guideL4Title: "Level 4 (Thermochemistry): ",
+                guideL4Desc: "Identify the type of reaction (exothermic/endothermic) based on the given enthalpy change. Each level has 5 questions.",
+                guideKimiaFunTitle: "Chemistry Fun: ",
+                guideKimiaFunDesc: "Explore exciting mini-games like 'Catch the Molecules', 'Compound Puzzle', 'Element Fusion', and 'Chemistry Crossword' for more interactive practice.",
+                guideUlanganTitle: "Quiz Mode: ",
+                guideUlanganDesc: "Test your knowledge with a series of random questions within a time limit.",
+                guideScoresTitle: "High Scores: ",
+                guideScoresDesc: "View your ranking and other players on the leaderboard.",
+                guideTipsTitle: "Game Tips",
+                guideTipsDesc: "Read each instruction carefully. Don't hesitate to retry difficult levels. The more you practice, the better your understanding!",
+                musicOnButton: "Music On",
+                musicOffButton: "Music Off",
+                volumeLabel: "Volume:",
+                musicAutoplayBlocked: "Music cannot autoplay. Please click the 'Music On' button to play."
+            },
+            id: {
+                appTitle: "CHEM-EQ QUEST",
+                welcomeHeading: "Selamat Datang di CHEM-EQ QUEST!",
+                languagePrompt: "Pilih bahasa Anda:",
+                loginHeading: "Masuk ke CHEM-EQ QUEST",
+                loginPrompt: "Silakan masukkan kredensial Anda atau masuk sebagai tamu.",
+                usernamePlaceholder: "Nama Pengguna (contoh: user)",
+                passwordPlaceholder: "Kata Sandi (contoh: pass)",
+                loginButton: "Masuk",
+                guestLoginButton: "Masuk sebagai Tamu",
+                loginSuccess: "Login berhasil!",
+                loginFailed: "Nama pengguna atau kata sandi tidak valid.",
+                profileHeading: "Masukkan Profil Anda",
+                profilePrompt: "Silakan masukkan nama dan kelas Anda:",
+                playerNamePlaceholder: "Nama Anda",
+                playerClassPlaceholder: "Kelas Anda",
+                saveProfileButton: "Mulai Permainan",
+                menuMainHeading: "Pilih Mode Permainan",
+                welcomeMessage: (name, className) => `Selamat datang, ${name} dari ${className}!`,
+                level1Title: "Level 1<br>(Reaksi Sederhana)",
+                level2Title: "Level 2<br>(Kesetimbangan)",
+                level3Title: "Level 3<br>(Laju Reaksi)",
+                level4Title: "Level 4<br>(Termokimia)",
+                kimiaFunTitle: "Kimia Asyik<br>(Mini-Games)",
+                ulanganModeTitle: "Mode Ulangan<br>(Uji Pengetahuan)",
+                highScoresTitle: "Skor Tertinggi<br>(Papan Peringkat)",
+                appGuideTitle: "Panduan Aplikasi<br>(Petunjuk Aplikasi)",
+                level1_h2: "Level 1: Reaksi Sederhana",
+                level1_desc: "Seimbangkan persamaan reaksi kimia berikut. (5 soal)",
+                inputA1Placeholder: "a",
+                inputB1Placeholder: "b",
+                inputC1Placeholder: "c",
+                inputD1Placeholder: "d",
+                checkAnswerButton: "Periksa Jawaban",
+                nextQuestionButton: "Lanjut",
+                levelCorrect: "Benar!",
+                levelWrong: "Jawaban Salah. Coba lagi!",
+                levelScore: (score) => `Skor: ${score}`,
+                levelQuestionCounter: (current, total) => `Soal ${current}/${total}`,
+                levelResult: (score, totalScore) => `Level selesai! Skor Anda: ${score}/${totalScore}`,
+                resetLevelButton: "Ulangi Level",
+                backToMenuButton: "Kembali ke Menu",
+
+                level2_h2: "Level 2: Kesetimbangan Kimia",
+                level2_desc: "Sesuaikan jumlah reaktan dan produk untuk mencapai kesetimbangan. (5 soal)",
+                n2Label: "Jumlah N₂:",
+                h2Label: "Jumlah H₂:",
+                nh3Label: "Jumlah NH₃:",
+                equilibriumStatusBalanced: "Status: SEIMBANG!",
+                equilibriumStatusNear: "Status: Hampir Seimbang!",
+                equilibriumStatusUnbalanced: "Status: Belum seimbang",
+                checkEquilibriumButton: "Periksa Kesetimbangan",
+                level2Correct: "Selamat! Anda mencapai kondisi kesetimbangan stoikiometri yang tepat.",
+                level2Near: "Cukup bagus, produk terbentuk! Tapi coba sesuaikan rasio untuk kesetimbangan yang lebih baik.",
+                level2Wrong: "Belum seimbang. Ingat rasio koefisien dalam reaksi!",
+
+                level3_h2: "Level 3: Laju Reaksi",
+                level3_desc: "Jawab pertanyaan-pertanyaan berikut tentang laju reaksi. (5 soal)",
+                level4_h2: "Level 4: Termokimia",
+                level4_desc: "Identifikasi jenis reaksi berdasarkan perubahan entalpi. (5 soal)",
+
+                kimiaFun_h2: "Kimia Asyik: Mini-Games!",
+                kimiaFun_desc: "Pilih mini-game untuk dimainkan:",
+                catchingGameTitle: "Tangkap Molekul",
+                catchingGameDesc: "Uji kecepatan Anda dalam menangkap molekul yang jatuh.",
+                puzzleGameTitle: "Puzzle Senyawa",
+                puzzleGameDesc: "Susunlah atom-atom menjadi senyawa kimia yang benar.",
+                elementFusionGameTitle: "Fusi Elemen",
+                elementFusionGameDesc: "Gabungkan elemen untuk membentuk senyawa terkait dengan elemen alam.",
+                crosswordGameTitle: "Teka-teki Silang Kimia",
+                crosswordGameDesc: "Pecahkan teka-teki silang dengan petunjuk kimia.",
+
+                catchingGame_h3: "Tangkap Molekul",
+                catchingGameInstructions: "Gunakan tombol panah kiri/kanan atau klik/sentuh untuk menggerakkan keranjang. Tangkap semua molekul yang jatuh!",
+                catchingScoreText: "Skor: ",
+                startGameCatchingButton: "Mulai Permainan",
+                endCatchingButton: "Selesai",
+                catchingGameEnd: (score) => `Permainan Selesai! Skor akhir Anda: ${score}`,
+
+                puzzleGame_h3: "Puzzle Senyawa",
+                puzzleGameInstructions: "Seret dan letakkan atom-atom ke dalam kotak yang tepat untuk membentuk senyawa yang diminta.",
+                targetCompoundText: "Senyawa yang diminta: ",
+                puzzleDropzoneText: "Lepaskan di sini",
+                puzzleScoreText: "Skor: ",
+                checkPuzzleButton: "Periksa Puzzle",
+                startNewPuzzleButton: "Mulai Puzzle Baru",
+                puzzleCorrect: (compound) => `Benar! Anda berhasil membentuk senyawa ${compound}.`,
+                puzzleWrong: "Salah. Coba lagi! Pastikan semua atom dan jumlahnya benar.",
+
+                elementFusionGame_h3: "Fusi Elemen",
+                elementFusionInstructions: "Seret elemen ke kategori yang benar (Api, Air, Tanah, Udara). Bentuklah senyawa yang tepat!",
+                fusionTimerText: (time) => `Waktu: ${time} detik`,
+                fusionScoreText: (score) => `Skor: ${score}`,
+                startFusionButton: "Mulai Fusi",
+                endFusionButton: "Selesai",
+                fusionCorrect: (compound) => `Benar! Senyawa ${compound} terbentuk.`,
+                fusionWrong: "Senyawa atau kategori salah.",
+                fusionGameOver: (score) => `Waktu habis! Skor Anda: ${score}`,
+                categoryFire: "Api",
+                categoryWater: "Air",
+                categoryEarth: "Tanah",
+                categoryAir: "Udara",
+
+                crosswordGame_h3: "Teka-teki Silang Kimia",
+                crosswordInstructions: "Isilah teka-teki silang dengan istilah-istilah kimia. Klik sel untuk melihat petunjuk.",
+                cluesAcrossTitle: "Mendatar",
+                cluesDownTitle: "Menurun",
+                checkCrosswordButton: "Periksa Jawaban",
+                startCrosswordButton: "Mulai Puzzle Baru",
+                crosswordScoreText: (score) => `Skor: ${score}`,
+                crosswordCorrect: "Semua benar!",
+                crosswordPartial: "Beberapa benar, lanjutkan!",
+                crosswordWrong: "Jawaban salah. Periksa kembali kimia Anda!",
+
+
+                ulanganMode_h2: "Mode Ulangan: Uji Pengetahuanmu!",
+                ulanganMode_desc: "Jawab pertanyaan-pertanyaan berikut dengan cepat dan tepat.",
+                ulanganTimer: (time) => `Waktu: ${time} detik`,
+                ulanganScoreText: (score) => `Skor Ulangan: ${score}`,
+                startUlanganButton: "Mulai Ulangan",
+                ulanganTimeOver: "Waktu Habis!",
+                ulanganEnded: (score) => `Ulangan selesai! Skor akhir Anda: ${score}`,
+                ulanganCorrect: "Benar!",
+                ulanganWrong: (answer) => `Salah. Jawaban yang benar adalah: ${answer}`,
+
+                highScores_h2: "Skor Tertinggi",
+                highScores_desc: "Lihat siapa yang terbaik di CHEM-EQ QUEST!",
+                noHighScores: "Belum ada skor tinggi. Mainkan game untuk menambahkannya!",
+                promptPlayerName: (score, game) => `Selamat! Anda mendapatkan skor ${score} di ${game}. Masukkan nama Anda untuk papan peringkat:`,
+                appGuide_h2: "Panduan Aplikasi: Petunjuk Aplikasi",
+                guideWelcomeTitle: "Selamat Datang di CHEM-EQ QUEST!",
+                guideWelcomeDesc: "Aplikasi ini dirancang untuk membantu Anda memahami konsep-konsep kimia dasar melalui permainan interaktif. Ada empat level utama yang mencakup berbagai topik, serta mini-game dan mode ulangan untuk menguji pengetahuan Anda.",
+                guideHowToPlayTitle: "Bagaimana Cara Bermain?",
+                guideL1Title: "Level 1 (Reaksi Sederhana): ",
+                guideL1Desc: "Setarakan persamaan reaksi kimia dengan memasukkan koefisien stoikiometri yang benar. Setiap level memiliki 5 soal.",
+                guideL2Title: "Level 2 (Kesetimbangan Kimia): ",
+                guideL2Desc: "Sesuaikan jumlah reaktan dan produk menggunakan slider untuk mencapai kondisi kesetimbangan. Perhatikan visual reaktor! Setiap level memiliki 5 soal.",
+                guideL3Title: "Level 3 (Laju Reaksi): ",
+                guideL3Desc: "Jawab pertanyaan pilihan ganda tentang faktor-faktor yang mempengaruhi laju reaksi. Setiap level memiliki 5 soal.",
+                guideL4Title: "Level 4 (Termokimia): ",
+                guideL4Desc: "Identifikasi jenis reaksi (eksotermik/endotermik) berdasarkan perubahan entalpi yang diberikan. Setiap level memiliki 5 soal.",
+                guideKimiaFunTitle: "Kimia Asyik: ",
+                guideKimiaFunDesc: "Jelajahi mini-game seru seperti 'Tangkap Molekul', 'Puzzle Senyawa', 'Fusi Elemen', dan 'Teka-teki Silang Kimia' untuk latihan yang lebih interaktif.",
+                guideUlanganTitle: "Mode Ulangan: ",
+                guideUlanganDesc: "Uji pengetahuan Anda dengan serangkaian pertanyaan acak dalam batas waktu.",
+                guideScoresTitle: "Skor Tertinggi: ",
+                guideScoresDesc: "Lihat peringkat Anda dan pemain lain di papan peringkat.",
+                guideTipsTitle: "Tips Bermain",
+                guideTipsDesc: "Baca setiap instruksi dengan cermat. Jangan ragu untuk mencoba kembali level yang sulit. Semakin sering Anda berlatih, semakin baik pemahaman Anda!",
+                musicOnButton: "Musik On",
+                musicOffButton: "Musik Off",
+                volumeLabel: "Volume:",
+                musicAutoplayBlocked: "Musik tidak dapat diputar otomatis. Silakan klik tombol 'Musik On' untuk memutar."
+            }
+        };
+
+        // --- Question Data for Levels ---
+        const level1Questions = [
+            { reaction: "a H₂ + b O₂ → c H₂O", answer: [2, 1, 2], inputs: 3 },
+            { reaction: "a N₂ + b H₂ → c NH₃", answer: [1, 3, 2], inputs: 3 },
+            { reaction: "a CH₄ + b O₂ → c CO₂ + d H₂O", answer: [1, 2, 1, 2], inputs: 4 },
+            { reaction: "a Al + b O₂ → c Al₂O₃", answer: [4, 3, 2], inputs: 3 },
+            { reaction: "a C₆H₁₂O₆ + b O₂ → c CO₂ + d H₂O", answer: [1, 6, 6, 6], inputs: 4 }
+        ];
+
+        const level2Questions = [
+            { reaction: "N₂ + 3H₂ ⇌ 2NH₃", initial: { N2: 5, H2: 5, NH3: 5 }, answer: { N2: 1, H2: 3, NH3: 2 } },
+            { reaction: "2SO₂ + O₂ ⇌ 2SO₃", initial: { SO2: 5, O2: 5, SO3: 5 }, answer: { SO2: 2, O2: 1, SO3: 2 } },
+            { reaction: "H₂ + I₂ ⇌ 2HI", initial: { H2: 5, I2: 5, HI: 5 }, answer: { H2: 1, I2: 1, HI: 2 } },
+            { reaction: "PCl₅ ⇌ PCl₃ + Cl₂", initial: { PCl5: 5, PCl3: 5, Cl2: 5 }, answer: { PCl5: 1, PCl3: 1, Cl2: 1 } },
+            { reaction: "CO + H₂O ⇌ CO₂ + H₂", initial: { CO: 5, H2O: 5, CO2: 5, H2: 5 }, answer: { CO: 1, H2O: 1, CO2: 1, H2: 1 } }
+        ];
+
+        const level3Questions = [
+            {
+                question_en: "What factor most affects the rate of 2H₂O₂(aq) → 2H₂O(l) + O₂(g)?",
+                choices_en: ["A. Increase in H₂O₂ concentration", "B. Decrease in temperature", "C. Decrease in surface area", "D. Increase in product concentration"],
+                answer_en: "A. Increase in H₂O₂ concentration",
+                question_id: "Faktor apa yang paling mempengaruhi laju reaksi 2H₂O₂(aq) → 2H₂O(l) + O₂(g)?",
+                choices_id: ["A. Peningkatan konsentrasi H₂O₂", "B. Penurunan suhu", "C. Pengurangan luas permukaan", "D. Peningkatan konsentrasi produk"],
+                answer_id: "A. Peningkatan konsentrasi H₂O₂"
+            },
+            {
+                question_en: "Adding a catalyst to a reaction will...",
+                choices_en: ["A. Increase activation energy", "B. Decrease reaction rate", "C. Provide an alternative reaction pathway", "D. Change the equilibrium position"],
+                answer_id: "C. Menyediakan jalur reaksi alternatif",
+                question_id: "Menambahkan katalis ke dalam reaksi akan...",
+                choices_id: ["A. Meningkatkan energi aktivasi", "B. Menurunkan laju reaksi", "C. Menyediakan jalur reaksi alternatif", "D. Mengubah posisi kesetimbangan"],
+                answer_id: "C. Menyediakan jalur reaksi alternatif"
+            },
+            {
+                question_en: "Which condition would increase the rate of dissolving sugar in water?",
+                choices_en: ["A. Using a larger sugar cube", "B. Cooling the water", "C. Stirring the mixture", "D. Decreasing the sugar concentration"],
+                answer_id: "C. Mengaduk campuran",
+                question_id: "Kondisi mana yang akan meningkatkan laju pelarutan gula dalam air?",
+                choices_id: ["A. Menggunakan kubus gula yang lebih besar", "B. Mendinginkan air", "C. Mengaduk campuran", "D. Mengurangi konsentrasi gula"],
+                answer_id: "C. Mengaduk campuran"
+            },
+            {
+                question_en: "Increasing temperature generally increases reaction rate because...",
+                choices_en: ["A. It decreases activation energy", "B. It increases reactant concentration", "C. It increases collision frequency and energy", "D. It shifts the equilibrium to products"],
+                answer_id: "C. Ini meningkatkan frekuensi dan energi tumbukan",
+                question_id: "Meningkatkan suhu umumnya meningkatkan laju reaksi karena...",
+                choices_id: ["A. Menurunkan energi aktivasi", "B. Meningkatkan konsentrasi reaktan", "C. Ini meningkatkan frekuensi dan energi tumbukan", "D. Menggeser kesetimbangan ke arah produk"],
+                answer_id: "C. Ini meningkatkan frekuensi dan energi tumbukan"
+            },
+            {
+                question_en: "Which of the following would NOT affect the rate of a gas-phase reaction?",
+                choices_en: ["A. Pressure", "B. Volume", "C. Adding an inert gas at constant volume", "D. Temperature"],
+                answer_id: "C. Menambahkan gas inert pada volume konstan",
+                question_id: "Manakah dari berikut ini yang TIDAK akan mempengaruhi laju reaksi fase gas?",
+                choices_id: ["A. Tekanan", "B. Volume", "C. Menambahkan gas inert pada volume konstan", "D. Suhu"],
+                answer_id: "C. Menambahkan gas inert pada volume konstan"
+            }
+        ];
+
+        const level4Questions = [
+            {
+                reaction_en: "CH₄(g) + 2O₂(g) → CO₂(g) + 2H₂O(l)  ΔH = -890 kJ/mol",
+                question_en: "What type of reaction is this based on the given enthalpy change?",
+                choices_en: ["A. Endothermic", "B. Exothermic", "C. Reversible", "D. Neutral"],
+                answer_en: "B. Exothermic",
+                reaction_id: "CH₄(g) + 2O₂(g) → CO₂(g) + 2H₂O(l)  ΔH = -890 kJ/mol",
+                question_id: "Apa jenis reaksi ini berdasarkan perubahan entalpi yang diberikan?",
+                choices_id: ["A. Endotermik", "B. Eksotermik", "C. Reversibel", "D. Netral"],
+                answer_id: "B. Eksotermik"
+            },
+            {
+                reaction_en: "2H₂O(l) + energy → 2H₂(g) + O₂(g)",
+                question_en: "This reaction is an example of an...",
+                choices_en: ["A. Exothermic reaction", "B. Endothermic reaction", "C. Combustion reaction", "D. Neutralization reaction"],
+                answer_en: "B. Endothermic reaction",
+                reaction_id: "2H₂O(l) + energi → 2H₂(g) + O₂(g)",
+                question_id: "Reaksi ini adalah contoh dari reaksi...",
+                choices_id: ["A. Reaksi eksotermik", "B. Reaksi endotermik", "C. Reaksi pembakaran", "D. Reaksi netralisasi"],
+                answer_id: "B. Reaksi endotermik"
+            },
+            {
+                reaction_en: "When a bond is broken, energy is...",
+                question_en: "",
+                choices_en: ["A. Released", "B. Absorbed", "C. Neither released nor absorbed", "D. Always converted to heat"],
+                answer_en: "B. Absorbed",
+                reaction_id: "Ketika ikatan diputus, energi...",
+                question_id: "",
+                choices_id: ["A. Dilepaskan", "B. Diserap", "C. Tidak dilepaskan maupun diserap", "D. Selalu diubah menjadi panas"],
+                answer_id: "B. Diserap"
+            },
+            {
+                reaction_en: "The ΔH for the formation of 1 mole of H₂O(l) from H₂(g) and O₂(g) is -285.8 kJ/mol. This means the reaction is...",
+                question_en: "",
+                choices_en: ["A. Endothermic and releases heat", "B. Exothermic and absorbs heat", "C. Endothermic and absorbs heat", "D. Exothermic and releases heat"],
+                answer_en: "D. Exothermic and releases heat",
+                reaction_id: "ΔH untuk pembentukan 1 mol H₂O(l) dari H₂(g) dan O₂(g) adalah -285.8 kJ/mol. Ini berarti reaksi tersebut...",
+                question_id: "",
+                choices_id: ["A. Endotermik dan melepaskan panas", "B. Eksotermik dan menyerap panas", "C. Endotermik dan menyerap panas", "D. Eksotermik dan melepaskan panas"],
+                answer_id: "D. Eksotermik dan melepaskan panas"
+            },
+            {
+                reaction_en: "In an isolated system, the total energy of reactants and products...",
+                question_en: "",
+                choices_en: ["A. Changes during a chemical reaction", "B. Remains constant during a chemical reaction", "C. Is always zero", "D. Increases over time"],
+                answer_en: "B. Remains constant during a chemical reaction",
+                reaction_id: "Dalam sistem terisolasi, total energi reaktan dan produk...",
+                question_id: "",
+                choices_id: ["A. Berubah selama reaksi kimia", "B. Tetap konstan selama reaksi kimia", "C. Selalu nol", "D. Meningkat seiring waktu"],
+                answer_id: "B. Tetap konstan selama reaksi kimia"
+            }
+        ];
+
+        // Element Fusion Data
+        const fusionCompounds = [
+            { compound: "CO₂", elements: ["C", "O", "O"], category: "Air", hint: "Gas hasil pernapasan dan pembakaran." },
+            { compound: "H₂O", elements: ["H", "H", "O"], category: "Water", hint: "Molekul kehidupan." },
+            { compound: "CH₄", elements: ["C", "H", "H", "H", "H"], category: "Fire", hint: "Gas utama dalam gas alam, mudah terbakar." },
+            { compound: "SiO₂", elements: ["Si", "O", "O"], category: "Earth", hint: "Komponen utama pasir dan kuarsa." },
+            { compound: "O₂", elements: ["O", "O"], category: "Air", hint: "Gas penting untuk pernapasan." },
+            { compound: "HCl", elements: ["H", "Cl"], category: "Water", hint: "Asam kuat, biasanya dilarutkan dalam air." },
+            { compound: "CaO", elements: ["Ca", "O"], category: "Earth", hint: "Kapur tohor, digunakan di tanah pertanian." },
+            { compound: "SO₂", elements: ["S", "O", "O"], category: "Air", hint: "Gas yang menyebabkan hujan asam." },
+            { compound: "N₂", elements: ["N", "N"], category: "Air", hint: "Gas paling melimpah di atmosfer." },
+            { compound: "H₂S", elements: ["H", "H", "S"], category: "Earth", hint: "Gas beracun berbau telur busuk, sering dari peluruhan organik." },
+            { compound: "Al₂O₃", elements: ["Al", "Al", "O", "O", "O"], category: "Earth", hint: "Alumina, komponen utama tanah liat dan batu bata." },
+            { compound: "Mg(OH)₂", elements: ["Mg", "O", "O", "H", "H"], category: "Water", hint: "Susu magnesia, basa yang digunakan sebagai antasida." },
+            { compound: "NO₂", elements: ["N", "O", "O"], category: "Air", hint: "Gas berwarna coklat-merah, polutan udara." },
+            { compound: "Fe₂O₃", elements: ["Fe", "Fe", "O", "O", "O"], category: "Earth", hint: "Karat, senyawa besi dan oksigen." }
+        ];
+
+        // Crossword Data (Simplified for example)
+        const crosswordData = {
+            grid: [
+                ['A', 'I', 'R', '', ''],
+                ['', 'O', '', '', ''],
+                ['', 'X', '', 'E', ''],
+                ['', 'Y', '', 'L', ''],
+                ['A', 'S', 'A', 'E', ''],
+                ['', 'G', '', 'M', ''],
+                ['', 'E', '', 'E', ''],
+                ['', 'N', '', 'N', ''],
+                ['', '', '', 'T', ''],
+            ],
+            words: [
+                { word: "AIR", clue_en: "Compound H2O (Across)", clue_id: "Senyawa H2O (Mendatar)", start: { row: 0, col: 0 }, direction: "across", number: 1 },
+                { word: "OKSIGEN", clue_en: "The gas we breathe (Down)", clue_id: "Gas yang kita hirup (Menurun)", start: { row: 1, col: 1 }, direction: "down", number: 2 },
+                { word: "ELEMEN", clue_en: "Basic building block of matter (Down)", clue_id: "Blok bangunan dasar materi (Menurun)", start: { row: 2, col: 3 }, direction: "down", number: 3 },
+                { word: "ASAM", clue_en: "Substance with pH less than 7 (Across)", clue_id: "Zat dengan pH kurang dari 7 (Mendatar)", start: { row: 4, col: 0 }, direction: "across", number: 4 },
+                { word: "NATRIUM", clue_en: "Element with symbol Na (Across)", clue_id: "Unsur dengan simbol Na (Mendatar)", start: { row: 7, col: 1 }, direction: "across", number: 5 }
+            ]
+        };
+
+
+        // --- Functions for Language and Profile ---
+        function setLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('language', lang);
+            updateContentLanguage();
+            // Attempt to play music after first user interaction (language selection)
+            if (!musicPlaying) {
+                playMusic();
+            }
+            showSection('loginScreen'); // Go to login screen after language selection
+        }
+
+        function updateContentLanguage() {
+            const t = translations[currentLanguage];
+
+            // General elements
+            document.getElementById('appTitle').textContent = t.appTitle;
+
+            // Welcome screen
+            document.getElementById('welcomeHeading').textContent = t.welcomeHeading;
+            document.getElementById('languagePrompt').textContent = t.languagePrompt;
+
+            // Login screen
+            document.getElementById('loginHeading').textContent = t.loginHeading;
+            document.getElementById('loginPrompt').textContent = t.loginPrompt;
+            document.getElementById('usernameInput').placeholder = t.usernamePlaceholder;
+            document.getElementById('passwordInput').placeholder = t.passwordPlaceholder;
+            document.getElementById('loginButton').textContent = t.loginButton;
+            document.getElementById('guestLoginButton').textContent = t.guestLoginButton;
+            document.getElementById('loginFeedback').textContent = ''; // Clear feedback on language change
+
+            // Profile input screen
+            document.getElementById('profileHeading').textContent = t.profileHeading;
+            document.getElementById('profilePrompt').textContent = t.profilePrompt;
+            document.getElementById('playerName').placeholder = t.playerNamePlaceholder;
+            document.getElementById('playerClass').placeholder = t.playerClassPlaceholder;
+            document.getElementById('saveProfileButton').textContent = t.saveProfileButton;
+
+            // Main Menu
+            document.getElementById('menuMainHeading').textContent = t.menuMainHeading;
+            if (currentPlayerName && currentPlayerClass) {
+                document.getElementById('welcomeMessage').textContent = t.welcomeMessage(currentPlayerName, currentPlayerClass);
+            } else {
+                document.getElementById('welcomeMessage').textContent = ''; // Clear if no profile
+            }
+            document.getElementById('level1Title').innerHTML = t.level1Title;
+            document.getElementById('level2Title').innerHTML = t.level2Title;
+            document.getElementById('level3Title').innerHTML = t.level3Title;
+            document.getElementById('level4Title').innerHTML = t.level4Title;
+            document.getElementById('kimiaFunTitle').innerHTML = t.kimiaFunTitle;
+            document.getElementById('ulanganModeTitle').innerHTML = t.ulanganModeTitle;
+            document.getElementById('highScoresTitle').innerHTML = t.highScoresTitle;
+            document.getElementById('appGuideTitle').innerHTML = t.appGuideTitle;
+
+            // Level 1
+            document.getElementById('level1_h2').textContent = t.level1_h2;
+            document.getElementById('level1_desc').textContent = t.level1_desc;
+            document.getElementById('inputA1').placeholder = t.inputA1Placeholder;
+            document.getElementById('inputB1').placeholder = t.inputB1Placeholder;
+            document.getElementById('inputC1').placeholder = t.inputC1Placeholder;
+            document.getElementById('inputD1').placeholder = t.inputD1Placeholder;
+            document.getElementById('checkAnswerButton1').textContent = t.checkAnswerButton;
+            document.getElementById('nextQuestionButton1').textContent = t.nextQuestionButton;
+            if (document.getElementById('backToMenuButton1')) document.getElementById('backToMenuButton1').textContent = t.backToMenuButton;
+            document.getElementById('resetLevel1Button').textContent = t.resetLevelButton;
+
+            // Level 2
+            document.getElementById('level2_h2').textContent = t.level2_h2;
+            document.getElementById('level2_desc').textContent = t.level2_desc;
+            document.getElementById('n2Label').textContent = t.n2Label;
+            document.getElementById('h2Label').textContent = t.h2Label;
+            document.getElementById('nh3Label').textContent = t.nh3Label;
+            document.getElementById('checkEquilibriumButton').textContent = t.checkEquilibriumButton;
+            document.getElementById('nextQuestionButton2').textContent = t.nextQuestionButton;
+            if (document.getElementById('backToMenuButton2')) document.getElementById('backToMenuButton2').textContent = t.backToMenuButton;
+            document.getElementById('resetLevel2Button').textContent = t.resetLevelButton;
+            updateEquilibriumStatusText(); // Update status text
+
+            // Level 3
+            document.getElementById('level3_h2').textContent = t.level3_h2;
+            document.getElementById('level3_desc').textContent = t.level3_desc;
+            document.getElementById('nextQuestionButton3').textContent = t.nextQuestionButton;
+            if (document.getElementById('backToMenuButton3')) document.getElementById('backToMenuButton3').textContent = t.backToMenuButton;
+            document.getElementById('resetLevel3Button').textContent = t.resetLevelButton;
+
+            // Level 4
+            document.getElementById('level4_h2').textContent = t.level4_h2;
+            document.getElementById('level4_desc').textContent = t.level4_desc;
+            document.getElementById('nextQuestionButton4').textContent = t.nextQuestionButton;
+            if (document.getElementById('backToMenuButton4')) document.getElementById('backToMenuButton4').textContent = t.backToMenuButton;
+            document.getElementById('resetLevel4Button').textContent = t.resetLevelButton;
+
+            // Kimia Fun
+            document.getElementById('kimiaFun_h2').textContent = t.kimiaFun_h2;
+            document.getElementById('kimiaFun_desc').textContent = t.kimiaFun_desc;
+            document.getElementById('catchingGameTitle').textContent = t.catchingGameTitle;
+            document.getElementById('catchingGameDesc').textContent = t.catchingGameDesc;
+            document.getElementById('puzzleGameTitle').textContent = t.puzzleGameTitle;
+            document.getElementById('puzzleGameDesc').textContent = t.puzzleGameDesc;
+            document.getElementById('elementFusionGameTitle').textContent = t.elementFusionGameTitle;
+            document.getElementById('elementFusionGameDesc').textContent = t.elementFusionGameDesc;
+            document.getElementById('crosswordGameTitle').textContent = t.crosswordGameTitle;
+            document.getElementById('crosswordGameDesc').textContent = t.crosswordGameDesc;
+            if (document.getElementById('backToMenuButtonKimiaFun')) document.getElementById('backToMenuButtonKimiaFun').textContent = t.backToMenuButton;
+
+            // Game Catching
+            document.getElementById('catchingGame_h3').textContent = t.catchingGame_h3;
+            document.getElementById('catchingGameInstructions').textContent = t.catchingGameInstructions;
+            document.getElementById('catchingScoreText').textContent = t.catchingScoreText + catchingScore;
+            document.getElementById('startGameCatchingButton').textContent = t.startGameCatchingButton;
+            document.getElementById('endCatchingButton').textContent = t.endCatchingButton;
+
+            // Game Puzzle
+            document.getElementById('puzzleGame_h3').textContent = t.puzzleGame_h3;
+            document.getElementById('puzzleGameInstructions').textContent = t.puzzleGameInstructions;
+            document.getElementById('targetCompoundText').textContent = t.targetCompoundText + currentTargetCompound;
+            document.getElementById('puzzleDropzone').textContent = t.puzzleDropzoneText;
+            document.getElementById('puzzleScoreText').textContent = t.puzzleScoreText + 0; // Score starts at 0
+            document.getElementById('checkPuzzleButton').textContent = t.checkPuzzleButton;
+            document.getElementById('startNewPuzzleButton').textContent = t.startNewPuzzleButton;
+
+            // Element Fusion
+            document.getElementById('elementFusionGame_h3').textContent = t.elementFusionGame_h3;
+            document.getElementById('elementFusionInstructions').textContent = t.elementFusionInstructions;
+            document.getElementById('fusionTimer').textContent = t.fusionTimerText(fusionTimeLeft);
+            document.getElementById('fusionScoreText').textContent = t.fusionScoreText(fusionScore);
+            document.getElementById('startFusionButton').textContent = t.startFusionButton;
+            document.getElementById('endFusionButton').textContent = t.endFusionButton;
+            document.querySelector('#categoryFire .category-name').textContent = t.categoryFire;
+            document.querySelector('#categoryWater .category-name').textContent = t.categoryWater;
+            document.querySelector('#categoryEarth .category-name').textContent = t.categoryEarth;
+            document.querySelector('#categoryAir .category-name').textContent = t.categoryAir;
+
+            // Crossword
+            document.getElementById('crosswordGame_h3').textContent = t.crosswordGame_h3;
+            document.getElementById('crosswordInstructions').textContent = t.crosswordInstructions;
+            document.getElementById('cluesAcrossTitle').textContent = t.cluesAcrossTitle;
+            document.getElementById('cluesDownTitle').textContent = t.cluesDownTitle;
+            document.getElementById('checkCrosswordButton').textContent = t.checkCrosswordButton;
+            document.getElementById('startCrosswordButton').textContent = t.startCrosswordButton;
+            document.getElementById('crosswordScoreText').textContent = t.crosswordScoreText(crosswordScore);
+
+
+            // Ulangan Mode
+            document.getElementById('ulanganMode_h2').textContent = t.ulanganMode_h2;
+            document.getElementById('ulanganMode_desc').textContent = t.ulanganMode_desc;
+            document.getElementById('ulanganTimer').textContent = t.ulanganTimer(timeLeft);
+            document.getElementById('ulanganScoreText').textContent = t.ulanganScoreText(ulanganScore);
+            document.getElementById('startUlanganButton').textContent = t.startUlanganButton;
+            if (document.getElementById('backToMenuButtonUlangan')) document.getElementById('backToMenuButtonUlangan').textContent = t.backToMenuButton;
+
+            // High Scores
+            document.getElementById('highScores_h2').textContent = t.highScores_h2;
+            document.getElementById('highScores_desc').textContent = t.highScores_desc;
+            if (document.getElementById('backToMenuButtonHighScores')) document.getElementById('backToMenuButtonHighScores').textContent = t.backToMenuButton;
+
+            // App Guide
+            document.getElementById('appGuide_h2').textContent = t.appGuide_h2;
+            document.getElementById('guideWelcomeTitle').textContent = t.guideWelcomeTitle;
+            document.getElementById('guideWelcomeDesc').textContent = t.guideWelcomeDesc;
+            document.getElementById('guideHowToPlayTitle').textContent = t.guideHowToPlayTitle;
+            document.getElementById('guideL1Title').textContent = t.guideL1Title;
+            document.getElementById('guideL1Desc').textContent = t.guideL1Desc;
+            document.getElementById('guideL2Title').textContent = t.guideL2Title;
+            document.getElementById('guideL2Desc').textContent = t.guideL2Desc;
+            document.getElementById('guideL3Title').textContent = t.guideL3Title;
+            document.getElementById('guideL3Desc').textContent = t.guideL3Desc;
+            document.getElementById('guideL4Title').textContent = t.guideL4Title;
+            document.getElementById('guideL4Desc').textContent = t.guideL4Desc;
+            document.getElementById('guideKimiaFunTitle').textContent = t.guideKimiaFunTitle;
+            document.getElementById('guideKimiaFunDesc').textContent = t.guideKimiaFunDesc;
+            document.getElementById('guideUlanganTitle').textContent = t.guideUlanganTitle;
+            document.getElementById('guideUlanganDesc').textContent = t.guideUlanganDesc;
+            document.getElementById('guideScoresTitle').textContent = t.guideScoresTitle;
+            document.getElementById('guideScoresDesc').textContent = t.guideScoresDesc;
+            document.getElementById('guideTipsTitle').textContent = t.guideTipsTitle;
+            document.getElementById('guideTipsDesc').textContent = t.guideTipsDesc;
+            if (document.getElementById('backToMenuButtonAppGuide')) document.getElementById('backToMenuButtonAppGuide').textContent = t.backToMenuButton;
+
+            // Music Controls
+            document.getElementById('musicToggleButton').textContent = musicPlaying ? t.musicOffButton : t.musicOnButton;
+            document.getElementById('volumeLabel').textContent = t.volumeLabel;
+
+        }
+
+        function performLogin() {
+            const username = document.getElementById('usernameInput').value;
+            const password = document.getElementById('passwordInput').value;
+            const feedbackElement = document.getElementById('loginFeedback');
+            const t = translations[currentLanguage];
+
+            // Dummy credentials for demonstration
+            if (username === 'user' && password === 'pass') {
+                feedbackElement.textContent = t.loginSuccess;
+                feedbackElement.className = 'feedback correct';
+                isLoggedIn = true;
+                localStorage.setItem('isLoggedIn', 'true');
+                // Proceed to profile setup or main menu
+                if (currentPlayerName && currentPlayerClass) {
+                    showSection('menuMain');
+                } else {
+                    showSection('profileInput');
+                }
+                playMusic(); // Attempt to play music after login
+            } else {
+                feedbackElement.textContent = t.loginFailed;
+                feedbackElement.className = 'feedback wrong';
+            }
+        }
+
+        function loginAsGuest() {
+            isLoggedIn = true;
+            localStorage.setItem('isLoggedIn', 'true');
+            // Clear any previous profile data for guest
+            currentPlayerName = '';
+            currentPlayerClass = '';
+            localStorage.removeItem('playerName');
+            localStorage.removeItem('playerClass');
+            updateContentLanguage(); // Update welcome message in menu
+            showSection('profileInput'); // Guests still need to set name/class
+            playMusic(); // Attempt to play music after guest login
+        }
+
+        function saveProfile() {
+            const nameInput = document.getElementById('playerName');
+            const classInput = document.getElementById('playerClass');
+            currentPlayerName = nameInput.value.trim();
+            currentPlayerClass = classInput.value.trim();
+
+            if (currentPlayerName && currentPlayerClass) {
+                localStorage.setItem('playerName', currentPlayerName);
+                localStorage.setItem('playerClass', currentPlayerClass);
+                updateContentLanguage(); // Update welcome message in menu
+                showSection('menuMain');
+            } else {
+                alert(translations[currentLanguage].profilePrompt); // Use localized alert
+            }
+        }
+
+        // --- Music Functions ---
+        function toggleMusic() {
+            if (musicPlaying) {
+                backgroundMusic.pause();
+                musicPlaying = false;
+                document.getElementById('musicToggleButton').textContent = translations[currentLanguage].musicOnButton;
+            } else {
+                playMusic();
+            }
+        }
+
+        function playMusic() {
+            // Attempt to play music. Browsers often require a user interaction for autoplay.
+            backgroundMusic.play().then(() => {
+                musicPlaying = true;
+                document.getElementById('musicToggleButton').textContent = translations[currentLanguage].musicOffButton;
+            }).catch(error => {
+                console.error("Failed to play music:", error);
+                // Inform user if autoplay is blocked
+                alert(translations[currentLanguage].musicAutoplayBlocked);
+                musicPlaying = false;
+                document.getElementById('musicToggleButton').textContent = translations[currentLanguage].musicOnButton;
+            });
+        }
+
+        function setMusicVolume() {
+            backgroundMusic.volume = document.getElementById('volumeSlider').value;
+        }
+
+        // --- Core Section Switching Logic ---
+        function updateBodyBackground(sectionId) {
+            document.body.className = ''; // Remove all previous background classes
+            switch (sectionId) {
+                case 'welcomeScreen':
+                    document.body.classList.add('bg-welcome');
+                    break;
+                case 'loginScreen':
+                    document.body.classList.add('bg-login');
+                    break;
+                case 'profileInput':
+                    document.body.classList.add('bg-profile');
+                    break;
+                case 'menuMain':
+                    document.body.classList.add('bg-menu');
+                    break;
+                case 'level1':
+                    document.body.classList.add('bg-level1');
+                    break;
+                case 'level2':
+                    document.body.classList.add('bg-level2');
+                    break;
+                case 'level3':
+                    document.body.classList.add('bg-level3');
+                    break;
+                case 'level4':
+                    document.body.classList.add('bg-level4');
+                    break;
+                case 'kimiaFun':
+                    document.body.classList.add('bg-kimiafun');
+                    break;
+                case 'gameCatching':
+                    document.body.classList.add('bg-kimiafun'); // Can be specific or general
+                    break;
+                case 'gamePuzzle':
+                    document.body.classList.add('bg-kimiafun'); // Can be specific or general
+                    break;
+                case 'gameElementFusion':
+                    document.body.classList.add('bg-elementfusion');
+                    break;
+                case 'gameCrossword':
+                    document.body.classList.add('bg-crossword');
+                    break;
+                case 'ulanganMode':
+                    document.body.classList.add('bg-ulangan');
+                    break;
+                case 'highScores':
+                    document.body.classList.add('bg-highscores');
+                    break;
+                case 'appGuide':
+                    document.body.classList.add('bg-appguide');
+                    break;
+                default:
+                    document.body.classList.add('bg-menu'); // Fallback
+                    break;
+            }
+        }
+
+        function showSection(id) {
+            sections.forEach(sectionId => {
+                const sectionElement = document.getElementById(sectionId);
+                if (sectionElement) {
+                    sectionElement.classList.add('hidden');
+                }
+            });
+            const targetSection = document.getElementById(id);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                updateBodyBackground(id); // Update background
+            }
+
+            // Specific actions for certain sections
+            if (id === 'level1') {
+                startLevel1();
+            } else if (id === 'level2') {
+                startLevel2();
+            } else if (id === 'level3') {
+                startLevel3();
+            } else if (id === 'level4') {
+                startLevel4();
+            } else if (id === 'highScores') {
+                displayHighScores();
+            } else if (id === 'ulanganMode') {
+                resetUlangan();
+            } else if (id === 'kimiaFun') {
+                // Ensure sub-games are hidden when returning to Kimia Fun menu
+                document.getElementById('gameCatching').classList.add('hidden');
+                document.getElementById('gamePuzzle').classList.add('hidden');
+                document.getElementById('gameElementFusion').classList.add('hidden');
+                document.getElementById('gameCrossword').classList.add('hidden');
+            } else if (id === 'menuMain') {
+                updateContentLanguage(); // Update welcome message
+            } else if (id === 'loginScreen') {
+                document.getElementById('usernameInput').value = '';
+                document.getElementById('passwordInput').value = '';
+                document.getElementById('loginFeedback').textContent = '';
+            }
+        }
+
+        // --- Level 1 Logic ---
+        function startLevel1() {
+            currentLevel = 1;
+            currentQuestionIndex = 0;
+            currentLevelScore = 0;
+            document.getElementById('resetLevel1Button').classList.add('hidden');
+            document.getElementById('level1Result').classList.add('hidden');
+            displayLevel1Question();
+            updateLevelScoreDisplay('level1');
+        }
+
+        function displayLevel1Question() {
+            const t = translations[currentLanguage];
+            const q = level1Questions[currentQuestionIndex];
+            document.getElementById('reaction1').textContent = q.reaction;
+            document.getElementById('inputA1').value = '';
+            document.getElementById('inputB1').value = '';
+            document.getElementById('inputC1').value = '';
+            document.getElementById('inputD1').value = '';
+            document.getElementById('inputD1').classList.add('hidden'); // Hide D by default
+
+            if (q.inputs === 4) {
+                document.getElementById('inputD1').classList.remove('hidden');
+            }
+
+            document.getElementById('feedback1').textContent = '';
+            document.getElementById('feedback1').className = 'feedback';
+            document.getElementById('checkAnswerButton1').classList.remove('hidden');
+            document.getElementById('nextQuestionButton1').classList.add('hidden');
+
+            document.getElementById('level1QuestionCounter').textContent = t.levelQuestionCounter(currentQuestionIndex + 1, level1Questions.length);
+        }
+
+        function checkBalance1() {
+            const t = translations[currentLanguage];
+            const q = level1Questions[currentQuestionIndex];
+            const a = parseInt(document.getElementById('inputA1').value);
+            const b = parseInt(document.getElementById('inputB1').value);
+            const c = parseInt(document.getElementById('inputC1').value);
+            let d = (q.inputs === 4) ? parseInt(document.getElementById('inputD1').value) : undefined;
+            const feedbackElement = document.getElementById('feedback1');
+
+            let correct = false;
+            if (q.inputs === 3) {
+                correct = (a === q.answer[0] && b === q.answer[1] && c === q.answer[2]);
+            } else if (q.inputs === 4) {
+                correct = (a === q.answer[0] && b === q.answer[1] && c === q.answer[2] && d === q.answer[3]);
+            }
+
+            if (correct) {
+                feedbackElement.textContent = t.levelCorrect;
+                feedbackElement.className = 'feedback correct';
+                currentLevelScore += 100;
+                updateLevelScoreDisplay('level1');
+                document.getElementById('checkAnswerButton1').classList.add('hidden');
+                document.getElementById('nextQuestionButton1').classList.remove('hidden');
+            } else {
+                feedbackElement.textContent = t.levelWrong;
+                feedbackElement.className = 'feedback wrong';
+            }
+        }
+
+        function nextLevel1Question() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < level1Questions.length) {
+                displayLevel1Question();
+            } else {
+                endLevel('level1');
+            }
+        }
+
+        // --- Level 2 Logic ---
+        function startLevel2() {
+            currentLevel = 2;
+            currentQuestionIndex = 0;
+            currentLevelScore = 0;
+            document.getElementById('resetLevel2Button').classList.add('hidden');
+            document.getElementById('level2Result').classList.add('hidden');
+            displayLevel2Question();
+            updateLevelScoreDisplay('level2');
+        }
+
+        function displayLevel2Question() {
+            const t = translations[currentLanguage];
+            const q = level2Questions[currentQuestionIndex];
+            document.getElementById('reaction2').textContent = q.reaction;
+
+            document.getElementById('n2Slider').value = q.initial.N2 || 0;
+            document.getElementById('h2Slider').value = q.initial.H2 || 0;
+            document.getElementById('nh3Slider').value = q.initial.NH3 || 0;
+
+            // Dynamically show/hide sliders if needed (e.g., if a reaction doesn't have N2)
+            document.getElementById('n2SliderContainer').classList.toggle('hidden', q.initial.N2 === undefined);
+            document.getElementById('h2SliderContainer').classList.toggle('hidden', q.initial.H2 === undefined);
+            document.getElementById('nh3SliderContainer').classList.toggle('hidden', q.initial.NH3 === undefined);
+
+            // Update labels dynamically based on question's reaction
+            const reactionText = q.reaction;
+            document.getElementById('n2Label').textContent = `${getFormulaFromReaction(reactionText, 'N₂')}:`;
+            document.getElementById('h2Label').textContent = `${getFormulaFromReaction(reactionText, 'H₂')}:`;
+            document.getElementById('nh3Label').textContent = `${getFormulaFromReaction(reactionText, 'NH₃') || getFormulaFromReaction(reactionText, 'SO₃') || getFormulaFromReaction(reactionText, 'HI') || getFormulaFromReaction(reactionText, 'PCl₃') || getFormulaFromReaction(reactionText, 'CO₂')}:`;
+
+
+            document.getElementById('feedback2').textContent = '';
+            document.getElementById('feedback2').className = 'feedback';
+            document.getElementById('checkEquilibriumButton').classList.remove('hidden');
+            document.getElementById('nextQuestionButton2').classList.add('hidden');
+            updateEquilibriumVisual(); // Update visual with initial values
+
+            document.getElementById('level2QuestionCounter').textContent = t.levelQuestionCounter(currentQuestionIndex + 1, level2Questions.length);
+        }
+
+        function getFormulaFromReaction(reactionText, defaultFormula) {
+            // A simple regex to extract formulas. Needs refinement for complex cases.
+            const match = reactionText.match(new RegExp(`\\b(\\w*?${defaultFormula.replace('₂', '2').replace('₃', '3').replace('₅', '5')}\\b)`, 'i'));
+            return match ? match[1] : defaultFormula;
+        }
+
+        function updateEquilibriumStatusText() {
+            const t = translations[currentLanguage];
+            const statusElement = document.getElementById('equilibriumStatus');
+            const q = level2Questions[currentQuestionIndex];
+
+            const currentN2 = parseFloat(document.getElementById('n2Slider').value);
+            const currentH2 = parseFloat(document.getElementById('h2Slider').value);
+            const currentNH3 = parseFloat(document.getElementById('nh3Slider').value);
+
+            let isBalanced = false;
+
+            // Simplified check based on exact answer. For a real game, this needs a tolerance.
+            if (q.reaction.includes("N₂ + 3H₂ ⇌ 2NH₃")) {
+                isBalanced = (currentN2 === 1 && currentH2 === 3 && currentNH3 === 2);
+            } else if (q.reaction.includes("2SO₂ + O₂ ⇌ 2SO₃")) {
+                isBalanced = (currentN2 === 2 && currentH2 === 1 && currentNH3 === 2); // N2, H2, NH3 are used as placeholders for SO2, O2, SO3
+            } else if (q.reaction.includes("H₂ + I₂ ⇌ 2HI")) {
+                isBalanced = (currentN2 === 1 && currentH2 === 1 && currentNH3 === 2); // N2, H2, NH3 are used as placeholders for H2, I2, HI
+            } else if (q.reaction.includes("PCl₅ ⇌ PCl₃ + Cl₂")) {
+                 isBalanced = (currentN2 === 1 && currentH2 === 1 && currentNH3 === 1); // N2, H2, NH3 are used as placeholders for PCl5, PCl3, Cl2
+            } else if (q.reaction.includes("CO + H₂O ⇌ CO₂ + H₂")) {
+                isBalanced = (currentN2 === 1 && currentH2 === 1 && currentNH3 === 1); // N2, H2, NH3 are used as placeholders for CO, H2O, CO2
+            }
+
+            if (isBalanced) {
+                statusElement.textContent = t.equilibriumStatusBalanced;
+                statusElement.style.color = 'green';
+            } else if (Math.abs(currentN2 - q.answer.N2) <= 1 && Math.abs(currentH2 - q.answer.H2) <= 1 && Math.abs(currentNH3 - q.answer.NH3) <= 1) {
+                statusElement.textContent = t.equilibriumStatusNear;
+                statusElement.style.color = 'orange';
+            } else {
+                statusElement.textContent = t.equilibriumStatusUnbalanced;
+                statusElement.style.color = '#00796b';
+            }
+        }
+
+        function updateEquilibriumVisual() {
+            const n2 = parseInt(document.getElementById('n2Slider').value);
+            const h2 = parseInt(document.getElementById('h2Slider').value);
+            const nh3 = parseInt(document.getElementById('nh3Slider').value);
+
+            document.getElementById('n2Value').textContent = n2;
+            document.getElementById('h2Value').textContent = h2;
+            document.getElementById('nh3Value').textContent = nh3;
+
+            const totalReactants = (document.getElementById('n2SliderContainer').classList.contains('hidden') ? 0 : n2) +
+                                  (document.getElementById('h2SliderContainer').classList.contains('hidden') ? 0 : h2);
+            const totalProducts = (document.getElementById('nh3SliderContainer').classList.contains('hidden') ? 0 : nh3);
+
+            // Avoid division by zero and handle cases where total is 0
+            const sumTotal = totalReactants + totalProducts;
+            const reactantHeight = sumTotal === 0 ? 50 : (totalReactants / sumTotal) * 100;
+            const productHeight = sumTotal === 0 ? 50 : (totalProducts / sumTotal) * 100;
+
+            document.getElementById('reactantLiquid').style.height = `${reactantHeight}%`;
+            document.getElementById('productLiquid').style.height = `${productHeight}%`;
+            updateEquilibriumStatusText(); // Update status text
+        }
+
+        function checkEquilibrium() {
+            const t = translations[currentLanguage];
+            const q = level2Questions[currentQuestionIndex];
+            const currentN2 = parseInt(document.getElementById('n2Slider').value);
+            const currentH2 = parseInt(document.getElementById('h2Slider').value);
+            const currentNH3 = parseInt(document.getElementById('nh3Slider').value);
+            const feedbackElement = document.getElementById('feedback2');
+
+            let isBalanced = false;
+            if (q.reaction.includes("N₂ + 3H₂ ⇌ 2NH₃")) {
+                isBalanced = (currentN2 === q.answer.N2 && currentH2 === q.answer.H2 && currentNH3 === q.answer.NH3);
+            } else if (q.reaction.includes("2SO₂ + O₂ ⇌ 2SO₃")) {
+                isBalanced = (currentN2 === q.answer.SO2 && currentH2 === q.answer.O2 && currentNH3 === q.answer.SO3);
+            } else if (q.reaction.includes("H₂ + I₂ ⇌ 2HI")) {
+                isBalanced = (currentN2 === q.answer.H2 && currentH2 === q.answer.I2 && currentNH3 === q.answer.HI);
+            } else if (q.reaction.includes("PCl₅ ⇌ PCl₃ + Cl₂")) {
+                 isBalanced = (currentN2 === q.answer.PCl5 && currentH2 === q.answer.PCl3 && currentNH3 === q.answer.Cl2);
+            } else if (q.reaction.includes("CO + H₂O ⇌ CO₂ + H₂")) {
+                isBalanced = (currentN2 === q.answer.CO && currentH2 === q.answer.H2O && currentNH3 === q.answer.CO2);
+            }
+
+            if (isBalanced) {
+                feedbackElement.textContent = t.level2Correct;
+                feedbackElement.className = 'feedback correct';
+                currentLevelScore += 100;
+                updateLevelScoreDisplay('level2');
+                document.getElementById('checkEquilibriumButton').classList.add('hidden');
+                document.getElementById('nextQuestionButton2').classList.remove('hidden');
+            } else if (Math.abs(currentN2 - q.answer.N2) <= 1 && Math.abs(currentH2 - q.answer.H2) <= 1 && Math.abs(currentNH3 - q.answer.NH3) <= 1) {
+                feedbackElement.textContent = t.level2Near;
+                feedbackElement.className = 'feedback warning';
+            } else {
+                feedbackElement.textContent = t.level2Wrong;
+                feedbackElement.className = 'feedback wrong';
+            }
+            updateEquilibriumVisual();
+        }
+
+        function nextLevel2Question() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < level2Questions.length) {
+                displayLevel2Question();
+            } else {
+                endLevel('level2');
+            }
+        }
+
+
+        // --- Level 3 Logic ---
+        function startLevel3() {
+            currentLevel = 3;
+            currentQuestionIndex = 0;
+            currentLevelScore = 0;
+            document.getElementById('resetLevel3Button').classList.add('hidden');
+            document.getElementById('level3Result').classList.add('hidden');
+            displayLevel3Question();
+            updateLevelScoreDisplay('level3');
+        }
+
+        function displayLevel3Question() {
+            const t = translations[currentLanguage];
+            const q = level3Questions[currentQuestionIndex];
+            document.getElementById('reaction3').textContent = q[`question_${currentLanguage}`].includes('reaction') ? q[`reaction_${currentLanguage}`] : ''; // Hide reaction if not relevant
+            document.getElementById('question3').textContent = q[`question_${currentLanguage}`].includes('reaction') ? q[`question_${currentLanguage}`].replace('reaction', '') : q[`question_${currentLanguage}`];
+
+            const choicesDiv = document.getElementById('choices3');
+            choicesDiv.innerHTML = '';
+            q[`choices_${currentLanguage}`].forEach(choice => {
+                const button = document.createElement('button');
+                button.textContent = choice;
+                button.onclick = () => checkAnswer3(choice, q[`answer_${currentLanguage}`]);
+                choicesDiv.appendChild(button);
+            });
+
+            document.getElementById('feedback3').textContent = '';
+            document.getElementById('feedback3').className = 'feedback';
+            document.getElementById('nextQuestionButton3').classList.add('hidden');
+            enableQuizButtons('choices3');
+
+            document.getElementById('level3QuestionCounter').textContent = t.levelQuestionCounter(currentQuestionIndex + 1, level3Questions.length);
+        }
+
+        function checkAnswer3(selectedAnswer, correctAnswer) {
+            const t = translations[currentLanguage];
+            const feedbackElement = document.getElementById('feedback3');
+            disableQuizButtons('choices3');
+
+            if (selectedAnswer === correctAnswer) {
+                feedbackElement.textContent = t.levelCorrect;
+                feedbackElement.className = 'feedback correct';
+                currentLevelScore += 100;
+                updateLevelScoreDisplay('level3');
+            } else {
+                feedbackElement.textContent = t.levelWrong;
+                feedbackElement.className = 'feedback wrong';
+            }
+            document.getElementById('nextQuestionButton3').classList.remove('hidden');
+        }
+
+        function nextLevel3Question() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < level3Questions.length) {
+                displayLevel3Question();
+            } else {
+                endLevel('level3');
+            }
+        }
+
+        // --- Level 4 Logic ---
+        function startLevel4() {
+            currentLevel = 4;
+            currentQuestionIndex = 0;
+            currentLevelScore = 0;
+            document.getElementById('resetLevel4Button').classList.add('hidden');
+            document.getElementById('level4Result').classList.add('hidden');
+            displayLevel4Question();
+            updateLevelScoreDisplay('level4');
+        }
+
+        function displayLevel4Question() {
+            const t = translations[currentLanguage];
+            const q = level4Questions[currentQuestionIndex];
+            document.getElementById('reaction4').textContent = q[`reaction_${currentLanguage}`];
+            document.getElementById('question4').textContent = q[`question_${currentLanguage}`];
+
+            const choicesDiv = document.getElementById('choices4');
+            choicesDiv.innerHTML = '';
+            q[`choices_${currentLanguage}`].forEach(choice => {
+                const button = document.createElement('button');
+                button.textContent = choice;
+                button.onclick = () => checkAnswer4(choice, q[`answer_${currentLanguage}`]);
+                choicesDiv.appendChild(button);
+            });
+
+            document.getElementById('feedback4').textContent = '';
+            document.getElementById('feedback4').className = 'feedback';
+            document.getElementById('nextQuestionButton4').classList.add('hidden');
+            enableQuizButtons('choices4');
+
+            document.getElementById('level4QuestionCounter').textContent = t.levelQuestionCounter(currentQuestionIndex + 1, level4Questions.length);
+        }
+
+        function checkAnswer4(selectedAnswer, correctAnswer) {
+            const t = translations[currentLanguage];
+            const feedbackElement = document.getElementById('feedback4');
+            disableQuizButtons('choices4');
+
+            if (selectedAnswer === correctAnswer) {
+                feedbackElement.textContent = t.levelCorrect;
+                feedbackElement.className = 'feedback correct';
+                currentLevelScore += 100;
+                updateLevelScoreDisplay('level4');
+            } else {
+                feedbackElement.textContent = t.levelWrong;
+                feedbackElement.className = 'feedback wrong';
+            }
+            document.getElementById('nextQuestionButton4').classList.remove('hidden');
+        }
+
+        function nextLevel4Question() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < level4Questions.length) {
+                displayLevel4Question();
+            } else {
+                endLevel('level4');
+            }
+        }
+
+        // --- General Level Functions ---
+        function updateLevelScoreDisplay(levelId) {
+            const t = translations[currentLanguage];
+            document.getElementById(`${levelId}ScoreDisplay`).textContent = t.levelScore(currentLevelScore);
+        }
+
+        function endLevel(levelId) {
+            const t = translations[currentLanguage];
+            document.getElementById(`${levelId}QuestionCounter`).textContent = ''; // Clear question counter
+            document.getElementById(`${levelId}ScoreDisplay`).textContent = ''; // Clear score display
+            document.getElementById(`${levelId}Result`).classList.remove('hidden');
+            document.getElementById(`${levelId}Result`).textContent = t.levelResult(currentLevelScore, level1Questions.length * 100); // Assuming 100 pts per question
+
+            document.getElementById(`checkAnswerButton${currentLevel}`).classList.add('hidden');
+            document.getElementById(`nextQuestionButton${currentLevel}`).classList.add('hidden');
+            document.getElementById(`feedback${currentLevel}`).textContent = '';
+
+            document.getElementById(`resetLevel${currentLevel}Button`).classList.remove('hidden');
+
+            // Save high score for the level
+            saveHighScore(translations[currentLanguage][`${levelId}Title`].replace(/<br>/g, ' '), currentLevelScore);
+        }
+
+        function disableQuizButtons(choicesDivId) {
+            document.querySelectorAll(`#${choicesDivId} button`).forEach(btn => btn.disabled = true);
+        }
+
+        function enableQuizButtons(choicesDivId) {
+            document.querySelectorAll(`#${choicesDivId} button`).forEach(btn => btn.disabled = false);
+        }
+
+        // --- Kimia Fun Mini-Games Logic ---
+        function showMiniGame(gameId) {
+            document.getElementById('gameCatching').classList.add('hidden');
+            document.getElementById('gamePuzzle').classList.add('hidden');
+            document.getElementById('gameElementFusion').classList.add('hidden');
+            document.getElementById('gameCrossword').classList.add('hidden');
+
+            document.getElementById(gameId).classList.remove('hidden');
+            updateBodyBackground(gameId);
+            if (gameId === 'gameCatching') {
+                resetCatchingGame();
+            } else if (gameId === 'gamePuzzle') {
+                resetPuzzleGame();
+            } else if (gameId === 'gameElementFusion') {
+                resetElementFusionGame();
+            } else if (gameId === 'gameCrossword') {
+                resetCrosswordGame();
+            }
+        }
+
+        // --- Game Catching Logic ---
+        let catchingGameInterval;
+        let compoundFallInterval;
+        let catchingScore = 0;
+        let basketPosition = 50; // Percentage from left
+        const compounds = ['H₂O', 'CO₂', 'O₂', 'N₂', 'CH₄']; // Example compounds
+
+        function resetCatchingGame() {
+            catchingScore = 0;
+            document.getElementById('catchingScoreText').textContent = translations[currentLanguage].catchingScoreText + catchingScore;
+            document.getElementById('catchingFeedback').textContent = '';
+            document.getElementById('gameCatching').querySelector('.game-simulation').innerHTML = '<div class="basket" id="catchingBasket"></div>';
+            document.getElementById('endCatchingButton').classList.add('hidden');
+            document.getElementById('startGameCatchingButton').classList.remove('hidden');
+            stopGameCatching();
+        }
+
+        function startGameCatching() {
+            resetCatchingGame(); // Ensure fresh start
+            document.getElementById('startGameCatchingButton').classList.add('hidden');
+            document.getElementById('endCatchingButton').classList.remove('hidden');
+
+            const gameArea = document.getElementById('gameCatching').querySelector('.game-simulation');
+            const basket = document.getElementById('catchingBasket');
+            basketPosition = 50;
+            basket.style.left = `${basketPosition}%`;
+
+            gameArea.addEventListener('mousemove', moveBasket);
+            gameArea.addEventListener('touchmove', moveBasketTouch);
+
+            compoundFallInterval = setInterval(createFallingCompound, 1500);
+            catchingGameInterval = setInterval(checkCollisions, 50);
+        }
+
+        function moveBasket(event) {
+            const gameArea = document.getElementById('gameCatching').querySelector('.game-simulation');
+            const basket = document.getElementById('catchingBasket');
+            const gameAreaRect = gameArea.getBoundingClientRect();
+            let newX = event.clientX - gameAreaRect.left - (basket.offsetWidth / 2);
+
+            newX = Math.max(0, Math.min(newX, gameAreaRect.width - basket.offsetWidth));
+            basket.style.left = `${(newX / gameAreaRect.width) * 100}%`;
+            basketPosition = (newX / gameAreaRect.width) * 100;
+        }
+
+        function moveBasketTouch(event) {
+            event.preventDefault();
+            const gameArea = document.getElementById('gameCatching').querySelector('.game-simulation');
+            const basket = document.getElementById('catchingBasket');
+            const gameAreaRect = gameArea.getBoundingClientRect();
+            let touchX = event.touches[0].clientX;
+            let newX = touchX - gameAreaRect.left - (basket.offsetWidth / 2);
+
+            newX = Math.max(0, Math.min(newX, gameAreaRect.width - basket.offsetWidth));
+            basket.style.left = `${(newX / gameAreaRect.width) * 100}%`;
+            basketPosition = (newX / gameAreaRect.width) * 100;
+        }
+
+        function createFallingCompound() {
+            const compound = document.createElement('div');
+            compound.classList.add('falling-compound');
+            compound.textContent = compounds[Math.floor(Math.random() * compounds.length)];
+            compound.style.left = `${Math.random() * 90 + 5}%`;
+            compound.style.animationDuration = `${Math.random() * 2 + 2}s`;
+            document.getElementById('gameCatching').querySelector('.game-simulation').appendChild(compound);
+
+            compound.addEventListener('animationend', () => {
+                if (compound.parentNode) {
+                    compound.remove();
+                }
+            });
+        }
+
+        function checkCollisions() {
+            const basket = document.getElementById('catchingBasket');
+            const fallingCompounds = document.querySelectorAll('.falling-compound');
+            const basketRect = basket.getBoundingClientRect();
+
+            fallingCompounds.forEach(compound => {
+                const compoundRect = compound.getBoundingClientRect();
+
+                if (compoundRect.bottom >= basketRect.top &&
+                    compoundRect.top <= basketRect.bottom &&
+                    compoundRect.right >= basketRect.left &&
+                    compoundRect.left <= basketRect.right) {
+
+                    catchingScore++;
+                    document.getElementById('catchingScoreText').textContent = translations[currentLanguage].catchingScoreText + catchingScore;
+                    compound.remove();
+                }
+            });
+        }
+
+        function endGameCatching() {
+            stopGameCatching();
+            document.getElementById('catchingFeedback').textContent = translations[currentLanguage].catchingGameEnd(catchingScore);
+            document.getElementById('endCatchingButton').classList.add('hidden');
+            document.getElementById('startGameCatchingButton').classList.remove('hidden');
+            saveHighScore(translations[currentLanguage].catchingGameTitle, catchingScore);
+        }
+
+        function stopGameCatching() {
+            clearInterval(catchingGameInterval);
+            clearInterval(compoundFallInterval);
+            document.querySelectorAll('.falling-compound').forEach(c => c.remove());
+            const gameArea = document.getElementById('gameCatching').querySelector('.game-simulation');
+            gameArea.removeEventListener('mousemove', moveBasket);
+            gameArea.removeEventListener('touchmove', moveBasketTouch);
+        }
+
+
+        // --- Game Puzzle Logic ---
+        let currentTargetCompound = '';
+        const compoundsData = {
+            'H₂O': ['H', 'H', 'O'],
+            'CO₂': ['C', 'O', 'O'],
+            'NH₃': ['N', 'H', 'H', 'H'],
+            'NaCl': ['Na', 'Cl'],
+            'C₆H₁₂O₆': ['C', 'C', 'C', 'C', 'C', 'C', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'H', 'O', 'O', 'O', 'O', 'O', 'O'] // Glucose, more challenging
+        };
+        let availablePuzzleCompounds = Object.keys(compoundsData);
+
+        function resetPuzzleGame() {
+            document.getElementById('puzzleScoreText').textContent = translations[currentLanguage].puzzleScoreText + 0;
+            document.getElementById('puzzleFeedback').textContent = '';
+            document.getElementById('puzzleDropzone').textContent = translations[currentLanguage].puzzleDropzoneText;
+            document.getElementById('puzzleDropzone').classList.remove('correct-dropzone', 'wrong-dropzone');
+            document.getElementById('puzzlePieces').innerHTML = '';
+            // Reset dataset content for dropzone explicitly
+            document.getElementById('puzzleDropzone').dataset.content = '';
+            startPuzzleGame(); // Generate new puzzle
+        }
+
+        function startPuzzleGame() {
+            document.getElementById('puzzleFeedback').textContent = '';
+            document.getElementById('puzzleDropzone').textContent = translations[currentLanguage].puzzleDropzoneText;
+            document.getElementById('puzzleDropzone').classList.remove('correct-dropzone', 'wrong-dropzone');
+            document.getElementById('puzzleDropzone').dataset.content = ''; // Clear stored content
+
+            currentTargetCompound = availablePuzzleCompounds[Math.floor(Math.random() * availablePuzzleCompounds.length)];
+            document.getElementById('targetCompoundText').textContent = translations[currentLanguage].targetCompoundText + currentTargetCompound;
+
+            const piecesContainer = document.getElementById('puzzlePieces');
+            piecesContainer.innerHTML = '';
+            const requiredAtoms = compoundsData[currentTargetCompound];
+            const allAtoms = [...requiredAtoms];
+
+            const allPossibleAtoms = ['H', 'O', 'C', 'N', 'S', 'Cl', 'Na'];
+            for (let i = 0; i < 3; i++) {
+                const randomAtom = allPossibleAtoms[Math.floor(Math.random() * allPossibleAtoms.length)];
+                if (!allAtoms.includes(randomAtom) && !requiredAtoms.includes(randomAtom)) { // Only add if not already present
+                    allAtoms.push(randomAtom);
+                }
+            }
+
+            allAtoms.sort(() => Math.random() - 0.5);
+
+            allAtoms.forEach(atom => {
+                const piece = document.createElement('div');
+                piece.classList.add('puzzle-item');
+                piece.setAttribute('draggable', 'true');
+                piece.setAttribute('data-atom', atom);
+                piece.textContent = atom;
+                piecesContainer.appendChild(piece);
+            });
+
+            addPuzzleEventListeners();
+        }
+
+        let draggedItem = null;
+
+        function addPuzzleEventListeners() {
+            const puzzleItems = document.querySelectorAll('.puzzle-item');
+            const dropzone = document.getElementById('puzzleDropzone');
+
+            puzzleItems.forEach(item => {
+                item.addEventListener('dragstart', dragStart);
+            });
+
+            dropzone.addEventListener('dragover', dragOver);
+            dropzone.addEventListener('drop', drop);
+            dropzone.addEventListener('dragleave', dragLeave);
+        }
+
+        function dragStart(e) {
+            draggedItem = e.target;
+            e.dataTransfer.setData('text/plain', e.target.dataset.atom);
+            e.dataTransfer.effectAllowed = 'move';
+            e.target.classList.add('dragging');
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.target.classList.add('drag-over');
+        }
+
+        function dragLeave(e) {
+            e.target.classList.remove('drag-over');
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            e.target.classList.remove('drag-over');
+            if (draggedItem) {
+                const atom = e.dataTransfer.getData('text/plain');
+                if (e.target.id === 'puzzleDropzone') {
+                    // Check if the dropzone already has content
+                    let currentContent = e.target.dataset.content || '';
+                    currentContent += atom;
+                    e.target.dataset.content = currentContent;
+                    e.target.textContent = currentContent; // Update visible text
+                    draggedItem.remove();
+                }
+            }
+            draggedItem = null;
+        }
+
+        function checkPuzzle() {
+            const dropzone = document.getElementById('puzzleDropzone');
+            const feedbackElement = document.getElementById('puzzleFeedback');
+            const currentPuzzleScore = parseInt(document.getElementById('puzzleScoreText').textContent.replace(translations[currentLanguage].puzzleScoreText, '').trim());
+
+            const droppedAtomsRaw = dropzone.dataset.content || '';
+            const droppedAtoms = droppedAtomsRaw.split('').sort().join('');
+            const requiredAtomsSorted = compoundsData[currentTargetCompound].sort().join('');
+
+            if (droppedAtoms === requiredAtomsSorted) {
+                feedbackElement.textContent = translations[currentLanguage].puzzleCorrect(currentTargetCompound);
+                feedbackElement.style.color = 'green';
+                document.getElementById('puzzleScoreText').textContent = translations[currentLanguage].puzzleScoreText + (currentPuzzleScore + 100);
+                dropzone.classList.remove('wrong-dropzone');
+                dropzone.classList.add('correct-dropzone');
+                saveHighScore(translations[currentLanguage].puzzleGameTitle, parseInt(document.getElementById('puzzleScoreText').textContent.replace(translations[currentLanguage].puzzleScoreText, '')));
+            } else {
+                feedbackElement.textContent = translations[currentLanguage].puzzleWrong;
+                feedbackElement.style.color = 'red';
+                dropzone.classList.remove('correct-dropzone');
+                dropzone.classList.add('wrong-dropzone');
+            }
+        }
+
+        // --- Element Fusion Game Logic (New) ---
+        function resetElementFusionGame() {
+            clearInterval(fusionTimerInterval);
+            fusionTimeLeft = 90;
+            fusionScore = 0;
+            document.getElementById('fusionTimer').textContent = translations[currentLanguage].fusionTimerText(fusionTimeLeft);
+            document.getElementById('fusionScoreText').textContent = translations[currentLanguage].fusionScoreText(fusionScore);
+            document.getElementById('fusionFeedback').textContent = '';
+            document.getElementById('fusionElements').innerHTML = '';
+            // Reset dropzones and their content
+            const dropzones = document.querySelectorAll('#fusionCategories .category-dropzone');
+            dropzones.forEach(zone => {
+                zone.querySelector('.compound-display').textContent = '';
+                zone.dataset.currentAtoms = ''; // Clear stored atoms
+                zone.classList.remove('correct-drop', 'wrong-drop');
+            });
+
+            document.getElementById('endFusionButton').classList.add('hidden');
+            document.getElementById('startFusionButton').classList.remove('hidden');
+        }
+
+        function startElementFusionGame() {
+            resetElementFusionGame();
+            document.getElementById('startFusionButton').classList.add('hidden');
+            document.getElementById('endFusionButton').classList.remove('hidden');
+            generateFusionElements();
+            addFusionEventListeners();
+            fusionTimerInterval = setInterval(updateFusionTimer, 1000);
+        }
+
+        function generateFusionElements() {
+            const elementsContainer = document.getElementById('fusionElements');
+            elementsContainer.innerHTML = '';
+            // Get 8 random compounds from fusionCompounds
+            const compoundsToUse = [...fusionCompounds].sort(() => Math.random() - 0.5).slice(0, 8);
+            compoundsToUse.forEach(item => {
+                item.elements.forEach(el => {
+                    const atomDiv = document.createElement('div');
+                    atomDiv.classList.add('element-atom');
+                    atomDiv.setAttribute('draggable', 'true');
+                    atomDiv.setAttribute('data-atom', el);
+                    atomDiv.setAttribute('data-compound', item.compound); // Store target compound for this atom
+                    atomDiv.setAttribute('data-category', item.category); // Store target category for this atom
+                    atomDiv.textContent = el;
+                    elementsContainer.appendChild(atomDiv);
+                });
+            });
+        }
+
+        function addFusionEventListeners() {
+            const atoms = document.querySelectorAll('.element-atom');
+            const dropzones = document.querySelectorAll('.category-dropzone');
+
+            atoms.forEach(atom => {
+                atom.addEventListener('dragstart', dragStartFusion);
+            });
+
+            dropzones.forEach(zone => {
+                zone.addEventListener('dragover', dragOverFusion);
+                zone.addEventListener('drop', dropFusion);
+                zone.addEventListener('dragleave', dragLeaveFusion);
+            });
+        }
+
+        function dragStartFusion(e) {
+            draggedFusionElement = e.target;
+            e.dataTransfer.setData('atom', e.target.dataset.atom);
+            e.dataTransfer.setData('compound', e.target.dataset.compound);
+            e.dataTransfer.setData('category', e.target.dataset.category);
+            e.dataTransfer.effectAllowed = 'move';
+            e.target.classList.add('dragging');
+        }
+
+        function dragOverFusion(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            e.target.classList.add('drag-over');
+        }
+
+        function dragLeaveFusion(e) {
+            e.target.classList.remove('drag-over');
+        }
+
+        function dropFusion(e) {
+            e.preventDefault();
+            e.target.classList.remove('drag-over');
+            if (draggedFusionElement && e.target.classList.contains('category-dropzone')) {
+                const droppedAtom = e.dataTransfer.getData('atom');
+                const targetCompound = e.dataTransfer.getData('compound');
+                const targetCategory = e.dataTransfer.getData('category');
+                const dropzoneCategory = e.target.dataset.category;
+
+                const compoundDisplay = e.target.querySelector('.compound-display');
+                let currentAtomsInDropzone = e.target.dataset.currentAtoms || '';
+                currentAtomsInDropzone += droppedAtom;
+                e.target.dataset.currentAtoms = currentAtomsInDropzone;
+                compoundDisplay.textContent = currentAtomsInDropzone; // Update visible text
+
+                draggedFusionElement.remove();
+
+                const requiredAtomsForCompound = compoundsData.find(c => c.compound === targetCompound).elements.sort().join('');
+                const sortedCurrentAtoms = Array.from(currentAtomsInDropzone).sort().join('');
+
+                if (sortedCurrentAtoms === requiredAtomsForCompound && dropzoneCategory === targetCategory) {
+                    fusionScore += 50;
+                    document.getElementById('fusionScoreText').textContent = translations[currentLanguage].fusionScoreText(fusionScore);
+                    document.getElementById('fusionFeedback').textContent = translations[currentLanguage].fusionCorrect(targetCompound);
+                    document.getElementById('fusionFeedback').style.color = 'green';
+                    e.target.classList.add('correct-drop');
+                    compoundDisplay.textContent = targetCompound; // Show the formed compound
+                    e.target.dataset.currentAtoms = 'SOLVED'; // Mark as solved
+                } else {
+                    document.getElementById('fusionFeedback').textContent = translations[currentLanguage].fusionWrong;
+                    document.getElementById('fusionFeedback').style.color = 'red';
+                    e.target.classList.add('wrong-drop');
+                }
+
+                setTimeout(() => {
+                    document.getElementById('fusionFeedback').textContent = '';
+                    e.target.classList.remove('correct-drop', 'wrong-drop');
+                }, 1500);
+            }
+        }
+
+        function updateFusionTimer() {
+            fusionTimeLeft--;
+            document.getElementById('fusionTimer').textContent = translations[currentLanguage].fusionTimerText(fusionTimeLeft);
+            if (fusionTimeLeft <= 0) {
+                endElementFusionGame();
+            }
+        }
+
+        function endElementFusionGame() {
+            clearInterval(fusionTimerInterval);
+            document.getElementById('fusionFeedback').textContent = translations[currentLanguage].fusionGameOver(fusionScore);
+            document.getElementById('endFusionButton').classList.add('hidden');
+            document.getElementById('startFusionButton').classList.remove('hidden');
+            saveHighScore(translations[currentLanguage].elementFusionGameTitle, fusionScore);
+        }
+
+        // --- Crossword Game Logic (New) ---
+        function resetCrosswordGame() {
+            crosswordScore = 0;
+            crosswordSolvedCells = 0;
+            document.getElementById('crosswordScoreText').textContent = translations[currentLanguage].crosswordScoreText(crosswordScore);
+            document.getElementById('crosswordFeedback').textContent = '';
+            document.getElementById('crosswordGrid').innerHTML = '';
+            document.getElementById('cluesAcross').innerHTML = '';
+            document.getElementById('cluesDown').innerHTML = '';
+            document.getElementById('startCrosswordButton').classList.remove('hidden');
+            document.getElementById('checkCrosswordButton').classList.add('hidden');
+        }
+
+        function startCrosswordGame() {
+            resetCrosswordGame();
+            document.getElementById('startCrosswordButton').classList.add('hidden');
+            document.getElementById('checkCrosswordButton').classList.remove('hidden');
+            generateCrossword();
+        }
+
+        function generateCrossword() {
+            const gridContainer = document.getElementById('crosswordGrid');
+            const cluesAcrossList = document.getElementById('cluesAcross');
+            const cluesDownList = document.getElementById('cluesDown');
+
+            gridContainer.innerHTML = '';
+            cluesAcrossList.innerHTML = '';
+            cluesDownList.innerHTML = '';
+
+            // Deep copy crosswordData.grid to avoid modifying original
+            const currentGrid = crosswordData.grid.map(row => [...row]);
+            crosswordSolution = {}; // Store correct answers for checking
+
+            const numRows = currentGrid.length;
+            const numCols = currentGrid[0].length;
+            gridContainer.style.gridTemplateColumns = `repeat(${numCols}, 1fr)`;
+
+            // Populate grid with cells
+            for (let r = 0; r < numRows; r++) {
+                for (let c = 0; c < numCols; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('crossword-cell');
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+
+                    if (currentGrid[r][c] === '') {
+                        cell.classList.add('empty');
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.maxLength = '1';
+                        input.addEventListener('input', (e) => {
+                            e.target.value = e.target.value.toUpperCase();
+                            // Optional: auto-move to next cell
+                            if (e.target.value) {
+                                const nextCell = e.target.parentElement.nextElementSibling;
+                                if (nextCell && nextCell.querySelector('input')) {
+                                    nextCell.querySelector('input').focus();
+                                }
+                            }
+                        });
+                        cell.appendChild(input);
+                    }
+                    gridContainer.appendChild(cell);
+                }
+            }
+
+            // Place words and generate clues
+            crosswordData.words.forEach(wordDef => {
+                const word = wordDef.word.toUpperCase();
+                const startRow = wordDef.start.row;
+                const startCol = wordDef.start.col;
+
+                let clueListItem = document.createElement('li');
+                clueListItem.textContent = `${wordDef.number}. ${wordDef[`clue_${currentLanguage}`]}`;
+
+                if (wordDef.direction === "across") {
+                    for (let i = 0; i < word.length; i++) {
+                        const cellElement = gridContainer.querySelector(`[data-row="${startRow}"][data-col="${startCol + i}"]`);
+                        if (cellElement && cellElement.querySelector('input')) {
+                            crosswordSolution[`${startRow}-${startCol + i}`] = word[i];
+                            if (i === 0) { // Only add clue number to the first cell of the word
+                                const numSpan = document.createElement('span');
+                                numSpan.classList.add('clue-number');
+                                numSpan.textContent = wordDef.number;
+                                cellElement.appendChild(numSpan);
+                            }
+                        }
+                    }
+                    cluesAcrossList.appendChild(clueListItem);
+                } else if (wordDef.direction === "down") {
+                    for (let i = 0; i < word.length; i++) {
+                        const cellElement = gridContainer.querySelector(`[data-row="${startRow + i}"][data-col="${startCol}"]`);
+                        if (cellElement && cellElement.querySelector('input')) {
+                            crosswordSolution[`${startRow + i}-${startCol}`] = word[i];
+                             if (i === 0) { // Only add clue number to the first cell of the word
+                                const numSpan = document.createElement('span');
+                                numSpan.classList.add('clue-number');
+                                numSpan.textContent = wordDef.number;
+                                cellElement.appendChild(numSpan);
+                            }
+                        }
+                    }
+                    cluesDownList.appendChild(clueListItem);
+                }
+            });
+        }
+
+        function checkCrossword() {
+            const t = translations[currentLanguage];
+            const feedbackElement = document.getElementById('crosswordFeedback');
+            let correctCount = 0;
+            let totalCells = 0;
+
+            document.querySelectorAll('#crosswordGrid .crossword-cell input').forEach(input => {
+                const row = input.parentElement.dataset.row;
+                const col = input.parentElement.dataset.col;
+                const cellKey = `${row}-${col}`;
+                const userChar = input.value.toUpperCase();
+                const correctChar = crosswordSolution[cellKey];
+
+                if (correctChar !== undefined) {
+                    totalCells++;
+                    if (userChar === correctChar) {
+                        input.style.backgroundColor = '#d4edda'; // Green for correct
+                        correctCount++;
+                    } else {
+                        input.style.backgroundColor = '#f8d7da'; // Red for incorrect
+                    }
+                }
+            });
+
+            crosswordScore = correctCount * 10; // 10 points per correct letter
+            document.getElementById('crosswordScoreText').textContent = t.crosswordScoreText(crosswordScore);
+
+            if (correctCount === totalCells && totalCells > 0) {
+                feedbackElement.textContent = t.crosswordCorrect;
+                feedbackElement.className = 'feedback correct';
+                saveHighScore(translations[currentLanguage].crosswordGameTitle, crosswordScore);
+            } else if (correctCount > 0) {
+                feedbackElement.textContent = t.crosswordPartial;
+                feedbackElement.className = 'feedback warning';
+            } else {
+                feedbackElement.textContent = t.crosswordWrong;
+                feedbackElement.className = 'feedback wrong';
+            }
+        }
+
+
+        // --- Mode Ulangan Logic ---
+        function loadUlanganQuestions() {
+            ulanganQuestions = [
+                {
+                    question_en: "What is the chemical formula for water?",
+                    choices_en: ["CO2", "H2O", "O2", "NaCl"],
+                    answer_en: "H2O",
+                    question_id: "Apa rumus kimia air?",
+                    choices_id: ["CO2", "H2O", "O2", "NaCl"],
+                    answer_id: "H2O"
+                },
+                {
+                    question_en: "A reaction that releases heat is called...",
+                    choices_en: ["Endothermic", "Exothermic", "Reversible", "Equilibrium"],
+                    answer_en: "Exothermic",
+                    question_id: "Reaksi yang melepaskan panas disebut reaksi...",
+                    choices_id: ["Endotermik", "Eksotermik", "Reversibel", "Kesetimbangan"],
+                    answer_id: "Eksotermik"
+                },
+                {
+                    question_en: "How many O atoms are in 2 molecules of H₂O?",
+                    choices_en: ["1", "2", "3", "4"],
+                    answer_en: "2",
+                    question_id: "Berapa jumlah atom O dalam 2 molekul H₂O?",
+                    choices_id: ["1", "2", "3", "4"],
+                    answer_id: "2"
+                },
+                {
+                    question_en: "What is the name of the element with the symbol Na?",
+                    choices_en: ["Nitrogen", "Neon", "Sodium", "Nickel"],
+                    answer_en: "Sodium",
+                    question_id: "Apa nama unsur dengan simbol Na?",
+                    choices_id: ["Nitrogen", "Neon", "Natrium", "Nikel"],
+                    answer_id: "Natrium"
+                },
+                {
+                    question_en: "Which factor does NOT increase reaction rate?",
+                    choices_en: ["Catalyst", "Temperature", "Surface area", "Decrease in reactant concentration"],
+                    answer_en: "Decrease in reactant concentration",
+                    question_id: "Faktor yang dapat mempercepat laju reaksi kecuali...",
+                    choices_id: ["Katalis", "Suhu", "Luas permukaan", "Penurunan konsentrasi reaktan"],
+                    answer_id: "Penurunan konsentrasi reaktan"
+                },
+                {
+                    question_en: "If a reaction reaches equilibrium, it means...",
+                    choices_en: ["The reaction stops", "Forward reaction rate equals reverse reaction rate", "All reactants are consumed", "Only products are formed"],
+                    answer_en: "Forward reaction rate equals reverse reaction rate",
+                    question_id: "Jika suatu reaksi mencapai kesetimbangan, itu berarti...",
+                    choices_id: ["Reaksi berhenti", "Laju reaksi maju sama dengan laju reaksi balik", "Semua reaktan habis", "Hanya produk yang terbentuk"],
+                    answer_id: "Laju reaksi maju sama dengan laju reaksi balik"
+                },
+                {
+                    question_en: "What is the atomic number of Carbon?",
+                    choices_en: ["6", "7", "8", "12"],
+                    answer_en: "6",
+                    question_id: "Berapa nomor atom Karbon?",
+                    choices_id: ["6", "7", "8", "12"],
+                    answer_id: "6"
+                },
+                {
+                    question_en: "Which state of matter has a definite volume but no definite shape?",
+                    choices_en: ["Solid", "Liquid", "Gas", "Plasma"],
+                    answer_en: "Liquid",
+                    question_id: "Wujud zat mana yang memiliki volume pasti tetapi tidak memiliki bentuk pasti?",
+                    choices_id: ["Padat", "Cair", "Gas", "Plasma"],
+                    answer_id: "Cair"
+                },
+                {
+                    question_en: "What type of bonding involves the sharing of electrons?",
+                    choices_en: ["Ionic", "Metallic", "Covalent", "Hydrogen"],
+                    answer_en: "Covalent",
+                    question_id: "Ikatan jenis apa yang melibatkan berbagi elektron?",
+                    choices_id: ["Ionik", "Logam", "Kovalen", "Hidrogen"],
+                    answer_id: "Kovalen"
+                },
+                {
+                    question_en: "Which of these is a noble gas?",
+                    choices_en: ["Oxygen", "Nitrogen", "Helium", "Chlorine"],
+                    answer_en: "Helium",
+                    question_id: "Manakah di antara ini yang merupakan gas mulia?",
+                    choices_id: ["Oksigen", "Nitrogen", "Helium", "Klorin"],
+                    answer_id: "Helium"
+                }
+            ];
+            ulanganQuestions.sort(() => Math.random() - 0.5);
+        }
+
+        function resetUlangan() {
+            clearInterval(ulanganTimerInterval);
+            timeLeft = 60;
+            ulanganScore = 0;
+            currentUlanganQuestionIndex = 0;
+            document.getElementById('ulanganScoreText').textContent = translations[currentLanguage].ulanganScoreText(ulanganScore);
+            document.getElementById('ulanganTimer').textContent = translations[currentLanguage].ulanganTimer(timeLeft);
+            document.getElementById('ulanganTimer').classList.remove('warning');
+            document.getElementById('feedbackUlangan').textContent = '';
+            document.getElementById('ulanganQuestion').textContent = '';
+            document.getElementById('ulanganChoices').innerHTML = '';
+            document.getElementById('startUlanganButton').classList.remove('hidden');
+        }
+
+        function startUlangan() {
+            loadUlanganQuestions();
+            resetUlangan(); // Re-initialize to ensure fresh start
+            document.getElementById('startUlanganButton').classList.add('hidden');
+            displayNextUlanganQuestion();
+            ulanganTimerInterval = setInterval(updateUlanganTimer, 1000);
+        }
+
+        function updateUlanganTimer() {
+            timeLeft--;
+            document.getElementById('ulanganTimer').textContent = translations[currentLanguage].ulanganTimer(timeLeft);
+            if (timeLeft <= 10 && timeLeft > 0) {
+                document.getElementById('ulanganTimer').classList.add('warning');
+            } else {
+                document.getElementById('ulanganTimer').classList.remove('warning');
+            }
+
+            if (timeLeft <= 0) {
+                endUlangan();
+            }
+        }
+
+        function displayNextUlanganQuestion() {
+            if (currentUlanganQuestionIndex < ulanganQuestions.length) {
+                const q = ulanganQuestions[currentUlanganQuestionIndex];
+                document.getElementById('ulanganQuestion').textContent = q[`question_${currentLanguage}`];
+                const choicesDiv = document.getElementById('ulanganChoices');
+                choicesDiv.innerHTML = '';
+
+                q[`choices_${currentLanguage}`].forEach(choice => {
+                    const button = document.createElement('button');
+                    button.textContent = choice;
+                    button.onclick = () => checkUlanganAnswer(choice, q[`answer_${currentLanguage}`]);
+                    choicesDiv.appendChild(button);
+                });
+                document.getElementById('feedbackUlangan').textContent = '';
+                enableQuizButtons('ulanganChoices');
+            } else {
+                endUlangan();
+            }
+        }
+
+        function checkUlanganAnswer(selectedAnswer, correctAnswer) {
+            const t = translations[currentLanguage];
+            const feedbackElement = document.getElementById('feedbackUlangan');
+            disableQuizButtons('ulanganChoices');
+
+            if (selectedAnswer === correctAnswer) {
+                feedbackElement.textContent = t.ulanganCorrect;
+                feedbackElement.className = 'feedback correct';
+                ulanganScore += 100;
+                document.getElementById('ulanganScoreText').textContent = t.ulanganScoreText(ulanganScore);
+            } else {
+                feedbackElement.textContent = t.ulanganWrong(correctAnswer);
+                feedbackElement.className = 'feedback wrong';
+            }
+
+            setTimeout(() => {
+                currentUlanganQuestionIndex++;
+                displayNextUlanganQuestion();
+            }, 1500);
+        }
+
+        function endUlangan() {
+            clearInterval(ulanganTimerInterval);
+            document.getElementById('ulanganTimer').textContent = translations[currentLanguage].ulanganTimeOver;
+            document.getElementById('ulanganTimer').classList.add('warning');
+            document.getElementById('ulanganQuestion').textContent = translations[currentLanguage].ulanganEnded(ulanganScore);
+            document.getElementById('ulanganChoices').innerHTML = '';
+            document.getElementById('feedbackUlangan').textContent = '';
+            saveHighScore(translations[currentLanguage].ulanganModeTitle, ulanganScore);
+            document.getElementById('startUlanganButton').classList.remove('hidden');
+        }
+
+
+        // --- High Scores Logic ---
+        function saveHighScore(gameName, score) {
+            const playerName = prompt(translations[currentLanguage].promptPlayerName(score, gameName));
+            if (playerName) {
+                highScores.push({ name: playerName, score: score, game: gameName, class: currentPlayerClass });
+                highScores.sort((a, b) => b.score - a.score);
+                highScores = highScores.slice(0, 10);
+                localStorage.setItem('highScores', JSON.stringify(highScores));
+                displayHighScores();
+            }
+        }
+
+        function displayHighScores() {
+            const list = document.getElementById('highScoresList');
+            list.innerHTML = '';
+
+            if (highScores.length === 0) {
+                list.innerHTML = `<li>${translations[currentLanguage].noHighScores}</li>`;
+                return;
+            }
+
+            highScores.forEach((entry, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span>${index + 1}. ${entry.name} (${entry.class || 'N/A'}) - ${entry.game}</span> <span>${entry.score}</span>`;
+                list.appendChild(li);
+            });
+        }
+
+        // --- Background Bubbles (Existing) ---
+        function createBubble() {
+            const bubble = document.createElement('div');
+            bubble.classList.add('bubble');
+            bubble.style.width = `${Math.random() * 60 + 20}px`;
+            bubble.style.height = bubble.style.width;
+            bubble.style.left = `${Math.random() * 100}%`;
+            bubble.style.animationDuration = `${Math.random() * 10 + 10}s`;
+            bubble.style.animationDelay = `-${Math.random() * 10}s`;
+            document.getElementById('mainBackground').appendChild(bubble);
+        }
+
+        // Create initial bubbles
+        for (let i = 0; i < 20; i++) {
+            createBubble();
+        }
+
+        // Clean up bubbles that have floated away to prevent DOM bloat
+        setInterval(() => {
+            document.querySelectorAll('.bubble').forEach(bubble => {
+                const rect = bubble.getBoundingClientRect();
+                if (rect.bottom < 0 || rect.right < 0 || rect.left > window.innerWidth) {
+                    bubble.remove();
+                    createBubble();
+                }
+            });
+        }, 1000);
+
+        // --- Initial Load Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
+            backgroundMusic.volume = 0.5; // Set initial volume
+            // Check if language is set
+            if (localStorage.getItem('language')) {
+                currentLanguage = localStorage.getItem('language');
+                updateContentLanguage(); // Apply language
+                // Check login status
+                if (isLoggedIn) {
+                    // Check if profile is set
+                    if (localStorage.getItem('playerName') && localStorage.getItem('playerClass')) {
+                        currentPlayerName = localStorage.getItem('playerName');
+                        currentPlayerClass = localStorage.getItem('playerClass');
+                        showSection('menuMain');
+                    } else {
+                        showSection('profileInput');
+                    }
+                    playMusic(); // Attempt to play music after returning to a logged-in state
+                } else {
+                    showSection('loginScreen'); // Go to login screen if not logged in
+                }
+            } else {
+                showSection('welcomeScreen'); // Show language selection if no language set
+                updateContentLanguage(); // Apply default English texts first
+            }
+            displayHighScores(); // Load high scores on startup
+        });
+    </script>
+</body>
+</html>
